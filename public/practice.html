@@ -1,25 +1,44 @@
-<script>
-int x = 5;
-  Scanner input = new Scanner(System.in);  // input
-int x = input.nextInt();
+<body>
+  <h1>videoflac practice</h1>
+  <p>This is a button</p>
+  <button id="myButton">Click me</button>
 
-System.out.println(x);  // output
-if (x > 10) {
-    System.out.println("Big number");
-}
-  button.addActionListener(e -> System.out.println("Clicked"));
-  class Dog {
-    String name;
-    int age;
-}
-  void sayHi() {
-    System.out.println("Hi");
-}
-for (int i = 0; i < 3; i++) {
-    System.out.println("Again");
-}
-  int[] numbers = {1, 2, 3};
-</script>
-<h1>videoflac practice</h1>
-<p>This is a button</p>
-<button color=red>Button Button</button>
+  <script>
+    // Variable – stores stuff
+    let x = 5;
+    console.log(x);
+
+    // Input – get info from user
+    let input = prompt("Enter a number:");
+    x = Number(input);  // convert input string to number
+
+    // Output – show info
+    console.log("You entered:", x);
+
+    // Decision – decide based on info
+    if (x > 10) {
+      console.log("Big number");
+    }
+
+    // Event – trigger code when button clicked
+    let button = document.getElementById("myButton");
+    button.addEventListener("click", function() {
+      console.log("Button clicked");
+    });
+
+    // Function – named code you can run
+    function sayHi() {
+      console.log("Hi");
+    }
+    sayHi();
+
+    // Loop – repeat code
+    for (let i = 0; i < 3; i++) {
+      console.log("Again");
+    }
+
+    // Array – numbered list of variables
+    let numbers = [1, 2, 3];
+    console.log(numbers[0]);  // prints 1
+  </script>
+</body>
