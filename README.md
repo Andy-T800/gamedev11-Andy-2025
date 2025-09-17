@@ -80,7 +80,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Wed Sept 17th, 2025</summary>
 
 ### Title
-1.
+1. Today we vibe coaded which is using ai to code a website
 1.
 1.
 
