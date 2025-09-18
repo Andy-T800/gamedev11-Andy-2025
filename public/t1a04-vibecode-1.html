@@ -1,0 +1,286 @@
+t1a04-vibecode-1
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Simple Frogger Game</title>
+<style>
+  body {
+    margin: 0;
+    background: #90ee90;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    user-select: none;
+    font-family: Arial, sans-serif;
+  }
+  #game {
+    position: relative;
+    width: 400px;
+    height: 600px;
+    background: linear-gradient(to top, #555 120px, #777 120px, #777 480px, #555 480px, #555 600px);
+    border: 5px solid #333;
+    overflow: hidden;
+  }
+  /* Road lanes */
+  .lane {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 60px;
+  }
+  .lane:nth-child(1) { top: 120px; }
+  .lane:nth-child(2) { top: 180px; }
+  .lane:nth-child(3) { top: 240px; }
+  .lane:nth-child(4) { top: 300px; }
+  .lane:nth-child(5) { top: 360px; }
+  .lane:nth-child(6) { top: 420px; }
+
+  /* Frog */
+  #frog {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: green;
+    border-radius: 50% 50% 40% 40%;
+    border: 3px solid #003300;
+    bottom: 10px;
+    left: 180px;
+    transition: left 0.1s, top 0.1s;
+    z-index: 10;
+  }
+
+  /* Car */
+  .car {
+    position: absolute;
+    width: 50px;
+    height: 40px;
+    background: red;
+    border-radius: 10px;
+    border: 2px solid #800000;
+  }
+  .car.blue {
+    background: blue;
+    border-color: #000080;
+  }
+
+  /* Info */
+  #info {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px black;
+  }
+  #message {
+    position: absolute;
+    width: 100%;
+    top: 260px;
+    text-align: center;
+    font-size: 24px;
+    color: white;
+    text-shadow: 2px 2px 4px black;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+
+<div id="game">
+  <div id="info">Use arrow keys to move the frog. Reach the top to win!</div>
+  <div id="frog"></div>
+  <div class="lane" style="top: 120px;"></div>
+  <div class="lane" style="top: 180px;"></div>
+  <div class="lane" style="top: 240px;"></div>
+  <div class="lane" style="top: 300px;"></div>
+  <div class="lane" style="top: 360px;"></div>
+  <div class="lane" style="top: 420px;"></div>
+  <div id="message"></div>
+</div>
+
+<script>
+  const game = document.getElementById('game');
+  const frog = document.getElementById('frog');
+  const message = document.getElementById('message');
+
+  const lanesY = [120, 180, 240, 300, 360, 420];
+  const laneHeight = 60;
+  const gameWidth = 400;
+  const gameHeight = 600;
+  const frogSize = 40;
+  const frogStep = 40;
+
+  // Initial frog position (bottom center)
+  let frogX = 180;
+  let frogY = 550;
+
+  frog.style.left = frogX + 'px';
+  frog.style.top = frogY + 'px';
+
+  // Car info: lanes, direction (1 = left to right, -1 = right to left), speed px/frame
+  const carsData = [
+    {lane: 0, direction: 1, speed: 2, color: 'red'},
+    {lane: 1, direction: -1, speed: 3, color: 'blue'},
+    {lane: 2, direction: 1, speed: 2.5, color: 'red'},
+    {lane: 3, direction: -1, speed: 3.5, color: 'blue'},
+    {lane: 4, direction: 1, speed: 2.2, color: 'red'},
+    {lane: 5, direction: -1, speed: 3.1, color: 'blue'},
+  ];
+
+  // Create cars
+  let cars = [];
+
+  function createCar(laneIndex, x) {
+    const car = document.createElement('div');
+    car.classList.add('car');
+    car.classList.add(carsData[laneIndex].color);
+    car.style.top = lanesY[laneIndex] + 10 + 'px';
+    car.style.left = x + 'px';
+    game.appendChild(car);
+    return {elem: car, laneIndex, x};
+  }
+
+  // Initialize cars spaced out
+  carsData.forEach((data, i) => {
+    // Create 3 cars per lane spaced evenly
+    for (let j = 0; j < 3; j++) {
+      let startX;
+      if (data.direction === 1) {
+        startX = -j * 150; // start off screen left
+      } else {
+        startX = gameWidth + j * 150; // start off screen right
+      }
+      cars.push(createCar(i, startX));
+    }
+  });
+
+  // Move frog function
+  function moveFrog(dx, dy) {
+    const newX = frogX + dx;
+    const newY = frogY + dy;
+
+    // Check bounds
+    if (newX >= 0 && newX <= gameWidth - frogSize &&
+        newY >= 0 && newY <= gameHeight - frogSize) {
+      frogX = newX;
+      frogY = newY;
+      frog.style.left = frogX + 'px';
+      frog.style.top = frogY + 'px';
+    }
+  }
+
+  // Keyboard controls
+  window.addEventListener('keydown', e => {
+    if (message.textContent) return; // freeze controls if game ended
+
+    switch(e.key) {
+      case 'ArrowUp':
+        moveFrog(0, -frogStep);
+        break;
+      case 'ArrowDown':
+        moveFrog(0, frogStep);
+        break;
+      case 'ArrowLeft':
+        moveFrog(-frogStep, 0);
+        break;
+      case 'ArrowRight':
+        moveFrog(frogStep, 0);
+        break;
+    }
+  });
+
+  // Collision detection
+  function isColliding(r1, r2) {
+    return !(r2.left > r1.right ||
+             r2.right < r1.left ||
+             r2.top > r1.bottom ||
+             r2.bottom < r1.top);
+  }
+
+  // Game loop
+  function update() {
+    if (message.textContent) return;
+
+    // Move cars
+    cars.forEach(car => {
+      const data = carsData[car.laneIndex];
+      car.x += data.speed * data.direction;
+
+      // Wrap cars around
+      if (data.direction === 1 && car.x > gameWidth) {
+        car.x = -50;
+      }
+      if (data.direction === -1 && car.x < -50) {
+        car.x = gameWidth;
+      }
+      car.elem.style.left = car.x + 'px';
+    });
+
+    // Check collision between frog and cars
+    const frogRect = {
+      left: frogX,
+      right: frogX + frogSize,
+      top: frogY,
+      bottom: frogY + frogSize
+    };
+
+    for (let car of cars) {
+      const carRect = {
+        left: car.x,
+        right: car.x + 50,
+        top: lanesY[car.laneIndex] + 10,
+        bottom: lanesY[car.laneIndex] + 50
+      };
+      if (isColliding(frogRect, carRect)) {
+        gameOver(false);
+        return;
+      }
+    }
+
+    // Check if frog reached top (safe zone)
+    if (frogY <= 80) {
+      gameOver(true);
+      return;
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  function gameOver(won) {
+    message.textContent = won ? "You Win! Press R to restart." : "Game Over! Press R to restart.";
+  }
+
+  // Restart game
+  window.addEventListener('keydown', e => {
+    if (e.key.toLowerCase() === 'r' && message.textContent) {
+      message.textContent = '';
+      frogX = 180;
+      frogY = 550;
+      frog.style.left = frogX + 'px';
+      frog.style.top = frogY + 'px';
+
+      // Reset cars positions
+      cars.forEach(car => {
+        const data = carsData[car.laneIndex];
+        let idx = cars.indexOf(car) % 3;
+        if (data.direction === 1) {
+          car.x = -idx * 150;
+        } else {
+          car.x = gameWidth + idx * 150;
+        }
+        car.elem.style.left = car.x + 'px';
+      });
+
+      requestAnimationFrame(update);
+    }
+  });
+
+  // Start game loop
+  requestAnimationFrame(update);
+</script>
+
+</body>
+</html>
