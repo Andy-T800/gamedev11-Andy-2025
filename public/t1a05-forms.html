@@ -1,72 +1,78 @@
-<h1 align=center>t1a05-forms-andy.html</h1>
+<h1 align="center">t1a05-forms-andy.html</h1>
 
 <form>
-Name:<input type="text" id="name" value="Andy"><br>
-Password:<input type="password" id="password" value="never"><br>
+  Name:<input type="text" id="name" value="Andy"><br>
+  Password:<input type="password" id="password" value="never"><br>
   Number:<input type="number" value="6"><br>
-  Button as an input:<input type="button" value="click" onclick="alert('hi')"><br>
-  Button as a button tag: <button id=Button>clickit</button><br><br><br>
-<script>
- const button = document.getElementById('Button');
-  button.addEventListener('click', function () {
-alert('the button has been pressed')
-  });
-</script>
+
+  Button as an input:
+  <input type="button" value="click" onclick="alert('hi')"><br>
+
+  Button as a button tag:
+  <button id="Button">clickit</button><br><br><br>
+
+  <script>
+    const button = document.getElementById('Button');
+    button.addEventListener('click', function () {
+      alert('The button has been pressed');
+    });
+  </script>
+
   Radio buttons:<br>
-  <input type=radio name="myRad" value="red">Red<br>
-  <input type=radio name="myRad" value="red">Blue<br>
+  <input type="radio" name="myRad" value="red">Red<br>
+  <input type="radio" name="myRad" value="blue">Blue<br>
 
   <br><br>
 
   Checkboxes:<br>
-  <input type="checkbox" value="reading">Reading<br>
-  <input type="checkbox" value="sports">Sports<br>
+  <input type="checkbox" name="interest" value="reading">Reading<br>
+  <input type="checkbox" name="interest" value="sports">Sports<br>
 
   <br><br>
 
-  <textarea rows=4 cols=90 >
-Writing here
-  </textarea>
+  <textarea rows="4" cols="90">Writing here</textarea>
 
   <br><br>
 
   Select Box<br>
-  <select >
+  <select name="country">
     <option value="USA">USA</option>
     <option value="CANADA">Canada</option>
   </select><br><br>
 
-    <fieldset>
+  <fieldset>
     <legend>Personal Information</legend>
-    
+
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" /><br /><br />
-    
+
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" /><br /><br />
-    
+
     <label for="dob">Date of Birth:</label>
     <input type="date" id="dob" name="dob" />
   </fieldset>
-  
+
   <br />
-  
+
   <fieldset>
     <legend>Preferences</legend>
-    
+
     <label>
       <input type="checkbox" name="subscribe" />
       Subscribe to newsletter
     </label><br />
-    
+
     <label for="food">Favorite Food:</label>
     <select id="food" name="food">
       <option value="">Select...</option>
       <option value="steak">Steak</option>
-      <option value="bakepotato">Baked Potato</option>
+      <option value="bakedpotato">Baked Potato</option>
       <option value="chicken">Chicken Wings</option>
     </select>
   </fieldset>
-     <input type="submit"><br>
-   <input type="reset"><br>
+
+  <br>
+  <input type="submit"><br>
+  <input type="reset"><br>
 </form>
