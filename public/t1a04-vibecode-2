@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simple Pong</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      border: 2px solid white;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="pongCanvas" width="800" height="500"></canvas>
+  <script>
+    const canvas = document.getElementById('pongCanvas');
+    const context = canvas.getContext('2d');
+
+    const paddleWidth = 10;
+    const paddleHeight = 100;
+    const ballRadius = 10;
+
+    let playerPaddleY = canvas.height / 2 - paddleHeight / 2;
+    let aiPaddleY = canvas.height / 2 - paddleHeight / 2;
+    let ballX = canvas.width / 2;
+    let ballY = canvas.height / 2;
+    let ballSpeedX = 5;
+    let ballSpeedY = 5;
+
+    // Update player's paddle position directly from mousemove
+    document.onmousemove = function(event) {
+      const rect = canvas.getBoundingClientRect();
+      playerPaddleY = event.clientY - rect.top - paddleHeight / 2;
+      if (playerPaddleY < 0) playerPaddleY = 0;
+      if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
+    };
+
+    function drawRectangle(x, y, width, height, color) {
+      context.fillStyle = color;
+      context.fillRect(x, y, width, height);
+    }
+
+    function drawCircle(x, y, radius, color) {
+      context.fillStyle = color;
+      context.beginPath();
+      context.arc(x, y, radius, 0, Math.PI * 2);
+      context.fill();
+    }
+
+    function drawNet() {
+      for (let i = 0; i < canvas.height; i += 20) {
+        drawRectangle(canvas.width / 2 - 1, i, 2, 10, 'white');
+      }
+    }
+
+    function updatePositions() {
+      ballX += ballSpeedX;
+      ballY += ballSpeedY;
+
+      // Bounce ball off top and bottom edges
+      if (ballY < ballRadius || ballY > canvas.height - ballRadius) {
+        ballSpeedY = -ballSpeedY;
+      }
+
+      // Simple AI paddle movement
+      const aiPaddleCenter = aiPaddleY + paddleHeight / 2;
+      if (aiPaddleCenter < ballY - 35) {
+        aiPaddleY += 6;
+      } else if (aiPaddleCenter > ballY + 35) {
+        aiPaddleY -= 6;
+      }
+      // Clamp AI paddle position
+      if (aiPaddleY < 0) aiPaddleY = 0;
+      if (aiPaddleY + paddleHeight > canvas.height) aiPaddleY = canvas.height - paddleHeight;
+
+      // Ball collision with player paddle
+      if (
+        ballX - ballRadius < paddleWidth &&
+        ballY > playerPaddleY &&
+        ballY < playerPaddleY + paddleHeight
+      ) {
+        ballSpeedX = -ballSpeedX;
+        ballX = paddleWidth + ballRadius; // prevent sticking
+      }
+
+      // Ball collision with AI paddle
+      if (
+        ballX + ballRadius > canvas.width - paddleWidth &&
+        ballY > aiPaddleY &&
+        ballY < aiPaddleY + paddleHeight
+      ) {
+        ballSpeedX = -ballSpeedX;
+        ballX = canvas.width - paddleWidth - ballRadius; // prevent sticking
+      }
+
+      // Reset ball if it goes out of bounds (score)
+      if (ballX < 0 || ballX > canvas.width) {
+        ballX = canvas.width / 2;
+        ballY = canvas.height / 2;
+        ballSpeedX = -ballSpeedX;
+        ballSpeedY = 5 * (Math.random() > 0.5 ? 1 : -1);
+      }
+    }
+
+    function drawEverything() {
+      drawRectangle(0, 0, canvas.width, canvas.height, 'black');
+      drawNet();
+      drawRectangle(0, playerPaddleY, paddleWidth, paddleHeight, 'white');
+      drawRectangle(canvas.width - paddleWidth, aiPaddleY, paddleWidth, paddleHeight, 'white');
+      drawCircle(ballX, ballY, ballRadius, 'white');
+    }
+
+    function gameLoop() {
+      updatePositions();
+      drawEverything();
+      requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+  </script>
+</body>
+</html>
