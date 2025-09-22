@@ -1,286 +1,131 @@
-t1a04-vibecode-1
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Simple Frogger Game</title>
-<style>
-  body {
-    margin: 0;
-    background: #90ee90;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    user-select: none;
-    font-family: Arial, sans-serif;
-  }
-  #game {
-    position: relative;
-    width: 400px;
-    height: 600px;
-    background: linear-gradient(to top, #555 120px, #777 120px, #777 480px, #555 480px, #555 600px);
-    border: 5px solid #333;
-    overflow: hidden;
-  }
-  /* Road lanes */
-  .lane {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 60px;
-  }
-  .lane:nth-child(1) { top: 120px; }
-  .lane:nth-child(2) { top: 180px; }
-  .lane:nth-child(3) { top: 240px; }
-  .lane:nth-child(4) { top: 300px; }
-  .lane:nth-child(5) { top: 360px; }
-  .lane:nth-child(6) { top: 420px; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pong Game</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-  /* Frog */
-  #frog {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    background: green;
-    border-radius: 50% 50% 40% 40%;
-    border: 3px solid #003300;
-    bottom: 10px;
-    left: 180px;
-    transition: left 0.1s, top 0.1s;
-    z-index: 10;
-  }
-
-  /* Car */
-  .car {
-    position: absolute;
-    width: 50px;
-    height: 40px;
-    background: red;
-    border-radius: 10px;
-    border: 2px solid #800000;
-  }
-  .car.blue {
-    background: blue;
-    border-color: #000080;
-  }
-
-  /* Info */
-  #info {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    color: white;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px black;
-  }
-  #message {
-    position: absolute;
-    width: 100%;
-    top: 260px;
-    text-align: center;
-    font-size: 24px;
-    color: white;
-    text-shadow: 2px 2px 4px black;
-    user-select: none;
-  }
-</style>
+    canvas {
+      border: 2px solid white;
+    }
+  </style>
 </head>
 <body>
+  <canvas id="gameCanvas" width="800" height="500"></canvas>
 
-<div id="game">
-  <div id="info">Use arrow keys to move the frog. Reach the top to win!</div>
-  <div id="frog"></div>
-  <div class="lane" style="top: 120px;"></div>
-  <div class="lane" style="top: 180px;"></div>
-  <div class="lane" style="top: 240px;"></div>
-  <div class="lane" style="top: 300px;"></div>
-  <div class="lane" style="top: 360px;"></div>
-  <div class="lane" style="top: 420px;"></div>
-  <div id="message"></div>
-</div>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
 
-<script>
-  const game = document.getElementById('game');
-  const frog = document.getElementById('frog');
-  const message = document.getElementById('message');
+    const paddleHeight = 100;
+    const paddleWidth = 10;
+    const ballSize = 10;
 
-  const lanesY = [120, 180, 240, 300, 360, 420];
-  const laneHeight = 60;
-  const gameWidth = 400;
-  const gameHeight = 600;
-  const frogSize = 40;
-  const frogStep = 40;
+    let playerY = canvas.height / 2 - paddleHeight / 2;
+    let aiY = canvas.height / 2 - paddleHeight / 2;
+    let ballX = canvas.width / 2;
+    let ballY = canvas.height / 2;
+    let ballSpeedX = 5;
+    let ballSpeedY = 5;
 
-  // Initial frog position (bottom center)
-  let frogX = 180;
-  let frogY = 550;
-
-  frog.style.left = frogX + 'px';
-  frog.style.top = frogY + 'px';
-
-  // Car info: lanes, direction (1 = left to right, -1 = right to left), speed px/frame
-  const carsData = [
-    {lane: 0, direction: 1, speed: 2, color: 'red'},
-    {lane: 1, direction: -1, speed: 3, color: 'blue'},
-    {lane: 2, direction: 1, speed: 2.5, color: 'red'},
-    {lane: 3, direction: -1, speed: 3.5, color: 'blue'},
-    {lane: 4, direction: 1, speed: 2.2, color: 'red'},
-    {lane: 5, direction: -1, speed: 3.1, color: 'blue'},
-  ];
-
-  // Create cars
-  let cars = [];
-
-  function createCar(laneIndex, x) {
-    const car = document.createElement('div');
-    car.classList.add('car');
-    car.classList.add(carsData[laneIndex].color);
-    car.style.top = lanesY[laneIndex] + 10 + 'px';
-    car.style.left = x + 'px';
-    game.appendChild(car);
-    return {elem: car, laneIndex, x};
-  }
-
-  // Initialize cars spaced out
-  carsData.forEach((data, i) => {
-    // Create 3 cars per lane spaced evenly
-    for (let j = 0; j < 3; j++) {
-      let startX;
-      if (data.direction === 1) {
-        startX = -j * 150; // start off screen left
-      } else {
-        startX = gameWidth + j * 150; // start off screen right
-      }
-      cars.push(createCar(i, startX));
+    function drawRect(x, y, w, h, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, w, h);
     }
-  });
 
-  // Move frog function
-  function moveFrog(dx, dy) {
-    const newX = frogX + dx;
-    const newY = frogY + dy;
-
-    // Check bounds
-    if (newX >= 0 && newX <= gameWidth - frogSize &&
-        newY >= 0 && newY <= gameHeight - frogSize) {
-      frogX = newX;
-      frogY = newY;
-      frog.style.left = frogX + 'px';
-      frog.style.top = frogY + 'px';
+    function drawCircle(x, y, r, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.fill();
     }
-  }
 
-  // Keyboard controls
-  window.addEventListener('keydown', e => {
-    if (message.textContent) return; // freeze controls if game ended
-
-    switch(e.key) {
-      case 'ArrowUp':
-        moveFrog(0, -frogStep);
-        break;
-      case 'ArrowDown':
-        moveFrog(0, frogStep);
-        break;
-      case 'ArrowLeft':
-        moveFrog(-frogStep, 0);
-        break;
-      case 'ArrowRight':
-        moveFrog(frogStep, 0);
-        break;
+    function drawNet() {
+      for (let i = 0; i < canvas.height; i += 20) {
+        drawRect(canvas.width / 2 - 1, i, 2, 10, "white");
+      }
     }
-  });
 
-  // Collision detection
-  function isColliding(r1, r2) {
-    return !(r2.left > r1.right ||
-             r2.right < r1.left ||
-             r2.top > r1.bottom ||
-             r2.bottom < r1.top);
-  }
+    function draw() {
+      drawRect(0, 0, canvas.width, canvas.height, "black");
+      drawNet();
+      drawRect(0, playerY, paddleWidth, paddleHeight, "white");
+      drawRect(canvas.width - paddleWidth, aiY, paddleWidth, paddleHeight, "white");
+      drawCircle(ballX, ballY, ballSize, "white");
+    }
 
-  // Game loop
-  function update() {
-    if (message.textContent) return;
+    function update() {
+      ballX += ballSpeedX;
+      ballY += ballSpeedY;
 
-    // Move cars
-    cars.forEach(car => {
-      const data = carsData[car.laneIndex];
-      car.x += data.speed * data.direction;
-
-      // Wrap cars around
-      if (data.direction === 1 && car.x > gameWidth) {
-        car.x = -50;
+      // Bounce off top/bottom
+      if (ballY < 0 || ballY > canvas.height) {
+        ballSpeedY = -ballSpeedY;
       }
-      if (data.direction === -1 && car.x < -50) {
-        car.x = gameWidth;
+
+      // AI movement
+      let aiCenter = aiY + paddleHeight / 2;
+      if (aiCenter < ballY - 35) {
+        aiY += 6;
+      } else if (aiCenter > ballY + 35) {
+        aiY -= 6;
       }
-      car.elem.style.left = car.x + 'px';
+
+      // Player collision
+      if (
+        ballX < paddleWidth &&
+        ballY > playerY &&
+        ballY < playerY + paddleHeight
+      ) {
+        ballSpeedX = -ballSpeedX;
+      }
+
+      // AI collision
+      if (
+        ballX > canvas.width - paddleWidth &&
+        ballY > aiY &&
+        ballY < aiY + paddleHeight
+      ) {
+        ballSpeedX = -ballSpeedX;
+      }
+
+      // Reset if ball goes out
+      if (ballX < 0 || ballX > canvas.width) {
+        ballX = canvas.width / 2;
+        ballY = canvas.height / 2;
+        ballSpeedX = -ballSpeedX;
+        ballSpeedY = 5;
+      }
+    }
+
+    canvas.addEventListener("mousemove", (e) => {
+      let rect = canvas.getBoundingClientRect();
+      playerY = e.clientY - rect.top - paddleHeight / 2;
     });
 
-    // Check collision between frog and cars
-    const frogRect = {
-      left: frogX,
-      right: frogX + frogSize,
-      top: frogY,
-      bottom: frogY + frogSize
-    };
-
-    for (let car of cars) {
-      const carRect = {
-        left: car.x,
-        right: car.x + 50,
-        top: lanesY[car.laneIndex] + 10,
-        bottom: lanesY[car.laneIndex] + 50
-      };
-      if (isColliding(frogRect, carRect)) {
-        gameOver(false);
-        return;
-      }
+    function gameLoop() {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
     }
 
-    // Check if frog reached top (safe zone)
-    if (frogY <= 80) {
-      gameOver(true);
-      return;
-    }
+    gameLoop();
+  </script>
+</body>
+</html>
 
-    requestAnimationFrame(update);
-  }
-
-  function gameOver(won) {
-    message.textContent = won ? "You Win! Press R to restart." : "Game Over! Press R to restart.";
-  }
-
-  // Restart game
-  window.addEventListener('keydown', e => {
-    if (e.key.toLowerCase() === 'r' && message.textContent) {
-      message.textContent = '';
-      frogX = 180;
-      frogY = 550;
-      frog.style.left = frogX + 'px';
-      frog.style.top = frogY + 'px';
-
-      // Reset cars positions
-      cars.forEach(car => {
-        const data = carsData[car.laneIndex];
-        let idx = cars.indexOf(car) % 3;
-        if (data.direction === 1) {
-          car.x = -idx * 150;
-        } else {
-          car.x = gameWidth + idx * 150;
-        }
-        car.elem.style.left = car.x + 'px';
-      });
-
-      requestAnimationFrame(update);
-    }
-  });
-
-  // Start game loop
-  requestAnimationFrame(update);
-</script>
 
 </body>
 </html>
