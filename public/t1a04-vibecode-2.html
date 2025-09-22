@@ -3,10 +3,12 @@ w=40;h=15;
 pp=h/2|0;ap=h/2|0;
 bx=w/2|0;by=h/2|0;
 bdx=1;bdy=1;
+ps=0;as=0;
 d=document;
 p=d.getElementById('p');
+let aiMoveCounter=0;
 function dG(){
-s='Player '+0+'  AI '+0+'\n';
+s='Player '+ps+'  AI '+as+'\n';
 for(y=0;y<h;y++){
 for(x=0;x<w;x++){
 if(x==0||x==w-1)s+='|';
@@ -25,9 +27,18 @@ bx+=bdx;by+=bdy;
 if(by<=1||by>=h-2)bdy=-bdy;
 if(bx==2&&by>=pp-1&&by<=pp+1)bdx=1;
 if(bx==w-3&&by>=ap-1&&by<=ap+1)bdx=-1;
-if(bx<=0||bx>=w-1){bx=w/2|0;by=h/2|0;bdx*=-1;}
-if(ap<by)ap++;else if(ap>by)ap--;
+if(bx<=0){as++;reset()}
+else if(bx>=w-1){ps++;reset()}
+// AI moves only every 2 calls to slow it down
+aiMoveCounter++;
+if(aiMoveCounter%10===0){
+  if(ap<by)ap++;
+  else if(ap>by)ap--;
+}
 dG();
+}
+function reset(){
+bx=w/2|0;by=h/2|0;bdx=bdx>0?-1:1;bdy=1;
 }
 d.onkeydown=e=>{
 if(e.key=='ArrowUp'&&pp>1)pp--;
