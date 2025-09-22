@@ -1,112 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Minimal Text Pong</title>
-  <style>
-    body {
-      background: black;
-      color: white;
-      font-family: monospace;
-      white-space: pre;
-      margin: 20px;
-    }
-  </style>
-</head>
-<body>
-  <pre id="game"></pre>
-
-  <script>
-    const gameElement = document.getElementById('game');
-    const width = 40;
-    const height = 15;
-
-    let playerPaddleY = Math.floor(height / 2);
-    let aiPaddleY = Math.floor(height / 2);
-    let ballX = Math.floor(width / 2);
-    let ballY = Math.floor(height / 2);
-    let ballDirX = 1; // 1 = right, -1 = left
-    let ballDirY = 1; // 1 = down, -1 = up
-
-    function drawGame() {
-      let screen = '';
-
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          // Left paddle
-          if (x === 1 && (y === playerPaddleY || y === playerPaddleY - 1 || y === playerPaddleY + 1)) {
-            screen += '|';
-          }
-          // Right paddle
-          else if (x === width - 2 && (y === aiPaddleY || y === aiPaddleY - 1 || y === aiPaddleY + 1)) {
-            screen += '|';
-          }
-          // Ball
-          else if (x === ballX && y === ballY) {
-            screen += 'O';
-          }
-          // Border top and bottom
-          else if (y === 0 || y === height -1) {
-            screen += '-';
-          }
-          // Border left and right
-          else if (x === 0 || x === width - 1) {
-            screen += '|';
-          }
-          else {
-            screen += ' ';
-          }
-        }
-        screen += '\n';
-      }
-
-      gameElement.textContent = screen;
-    }
-
-    function updateGame() {
-      // Move ball
-      ballX += ballDirX;
-      ballY += ballDirY;
-
-      // Bounce top and bottom
-      if (ballY <= 1 || ballY >= height - 2) {
-        ballDirY = -ballDirY;
-      }
-
-      // Ball hits player paddle
-      if (ballX === 2 && (ballY === playerPaddleY || ballY === playerPaddleY -1 || ballY === playerPaddleY +1)) {
-        ballDirX = 1;
-      }
-
-      // Ball hits AI paddle
-      if (ballX === width - 3 && (ballY === aiPaddleY || ballY === aiPaddleY -1 || ballY === aiPaddleY +1)) {
-        ballDirX = -1;
-      }
-
-      // Score and reset if ball passes paddles
-      if (ballX <= 0 || ballX >= width -1) {
-        ballX = Math.floor(width / 2);
-        ballY = Math.floor(height / 2);
-        ballDirX = ballDirX === 1 ? -1 : 1;
-      }
-
-      // Simple AI moves towards ball
-      if (aiPaddleY < ballY) aiPaddleY++;
-      else if (aiPaddleY > ballY) aiPaddleY--;
-
-      drawGame();
-    }
-
-    // Control player paddle with keyboard arrows (Up/Down)
-    document.onkeydown = function(e) {
-      if (e.key === 'ArrowUp' && playerPaddleY > 1) playerPaddleY--;
-      if (e.key === 'ArrowDown' && playerPaddleY < height - 2) playerPaddleY++;
-      drawGame();
-    }
-
-    drawGame();
-    setInterval(updateGame, 150);
-  </script>
-</body>
-</html>
-
+<pre id=p></pre><script>
+w=40;h=15;
+pp=h/2|0;ap=h/2|0;
+bx=w/2|0;by=h/2|0;
+bdx=1;bdy=1;
+d=document;
+p=d.getElementById('p');
+function dG(){
+s='Player '+0+'  AI '+0+'\n';
+for(y=0;y<h;y++){
+for(x=0;x<w;x++){
+if(x==0||x==w-1)s+='|';
+else if(y==0||y==h-1)s+='-';
+else if(x==1&&y>=pp-1&&y<=pp+1)s+='|';
+else if(x==w-2&&y>=ap-1&&y<=ap+1)s+='|';
+else if(x==bx&&y==by)s+='O';
+else s+=' ';
+}
+s+='\n'
+}
+p.textContent=s;
+}
+function uG(){
+bx+=bdx;by+=bdy;
+if(by<=1||by>=h-2)bdy=-bdy;
+if(bx==2&&by>=pp-1&&by<=pp+1)bdx=1;
+if(bx==w-3&&by>=ap-1&&by<=ap+1)bdx=-1;
+if(bx<=0||bx>=w-1){bx=w/2|0;by=h/2|0;bdx*=-1;}
+if(ap<by)ap++;else if(ap>by)ap--;
+dG();
+}
+d.onkeydown=e=>{
+if(e.key=='ArrowUp'&&pp>1)pp--;
+if(e.key=='ArrowDown'&&pp<h-2)pp++;
+}
+setInterval(uG,100);
+dG();
+</script>
