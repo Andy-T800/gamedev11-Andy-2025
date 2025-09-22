@@ -2,131 +2,111 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Simple Pong</title>
+  <title>Minimal Text Pong</title>
   <style>
     body {
-      margin: 0;
       background: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       color: white;
-      font-family: Arial, sans-serif;
-    }
-    canvas {
-      border: 2px solid white;
-      display: block;
+      font-family: monospace;
+      white-space: pre;
+      margin: 20px;
     }
   </style>
 </head>
 <body>
-  <canvas id="pongCanvas" width="800" height="500"></canvas>
+  <pre id="game"></pre>
+
   <script>
-    const canvas = document.getElementById('pongCanvas');
-    const context = canvas.getContext('2d');
+    const gameElement = document.getElementById('game');
+    const width = 40;
+    const height = 15;
 
-    const paddleWidth = 10;
-    const paddleHeight = 100;
-    const ballRadius = 10;
+    let playerPaddleY = Math.floor(height / 2);
+    let aiPaddleY = Math.floor(height / 2);
+    let ballX = Math.floor(width / 2);
+    let ballY = Math.floor(height / 2);
+    let ballDirX = 1; // 1 = right, -1 = left
+    let ballDirY = 1; // 1 = down, -1 = up
 
-    let playerPaddleY = canvas.height / 2 - paddleHeight / 2;
-    let aiPaddleY = canvas.height / 2 - paddleHeight / 2;
-    let ballX = canvas.width / 2;
-    let ballY = canvas.height / 2;
-    let ballSpeedX = 5;
-    let ballSpeedY = 5;
+    function drawGame() {
+      let screen = '';
 
-    // Update player's paddle position directly from mousemove
-    document.onmousemove = function(event) {
-      const rect = canvas.getBoundingClientRect();
-      playerPaddleY = event.clientY - rect.top - paddleHeight / 2;
-      if (playerPaddleY < 0) playerPaddleY = 0;
-      if (playerPaddleY + paddleHeight > canvas.height) playerPaddleY = canvas.height - paddleHeight;
-    };
-
-    function drawRectangle(x, y, width, height, color) {
-      context.fillStyle = color;
-      context.fillRect(x, y, width, height);
-    }
-
-    function drawCircle(x, y, radius, color) {
-      context.fillStyle = color;
-      context.beginPath();
-      context.arc(x, y, radius, 0, Math.PI * 2);
-      context.fill();
-    }
-
-    function drawNet() {
-      for (let i = 0; i < canvas.height; i += 20) {
-        drawRectangle(canvas.width / 2 - 1, i, 2, 10, 'white');
-      }
-    }
-
-    function updatePositions() {
-      ballX += ballSpeedX;
-      ballY += ballSpeedY;
-
-      // Bounce ball off top and bottom edges
-      if (ballY < ballRadius || ballY > canvas.height - ballRadius) {
-        ballSpeedY = -ballSpeedY;
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          // Left paddle
+          if (x === 1 && (y === playerPaddleY || y === playerPaddleY - 1 || y === playerPaddleY + 1)) {
+            screen += '|';
+          }
+          // Right paddle
+          else if (x === width - 2 && (y === aiPaddleY || y === aiPaddleY - 1 || y === aiPaddleY + 1)) {
+            screen += '|';
+          }
+          // Ball
+          else if (x === ballX && y === ballY) {
+            screen += 'O';
+          }
+          // Border top and bottom
+          else if (y === 0 || y === height -1) {
+            screen += '-';
+          }
+          // Border left and right
+          else if (x === 0 || x === width - 1) {
+            screen += '|';
+          }
+          else {
+            screen += ' ';
+          }
+        }
+        screen += '\n';
       }
 
-      // Simple AI paddle movement
-      const aiPaddleCenter = aiPaddleY + paddleHeight / 2;
-      if (aiPaddleCenter < ballY - 35) {
-        aiPaddleY += 6;
-      } else if (aiPaddleCenter > ballY + 35) {
-        aiPaddleY -= 6;
-      }
-      // Clamp AI paddle position
-      if (aiPaddleY < 0) aiPaddleY = 0;
-      if (aiPaddleY + paddleHeight > canvas.height) aiPaddleY = canvas.height - paddleHeight;
-
-      // Ball collision with player paddle
-      if (
-        ballX - ballRadius < paddleWidth &&
-        ballY > playerPaddleY &&
-        ballY < playerPaddleY + paddleHeight
-      ) {
-        ballSpeedX = -ballSpeedX;
-        ballX = paddleWidth + ballRadius; // prevent sticking
-      }
-
-      // Ball collision with AI paddle
-      if (
-        ballX + ballRadius > canvas.width - paddleWidth &&
-        ballY > aiPaddleY &&
-        ballY < aiPaddleY + paddleHeight
-      ) {
-        ballSpeedX = -ballSpeedX;
-        ballX = canvas.width - paddleWidth - ballRadius; // prevent sticking
-      }
-
-      // Reset ball if it goes out of bounds (score)
-      if (ballX < 0 || ballX > canvas.width) {
-        ballX = canvas.width / 2;
-        ballY = canvas.height / 2;
-        ballSpeedX = -ballSpeedX;
-        ballSpeedY = 5 * (Math.random() > 0.5 ? 1 : -1);
-      }
+      gameElement.textContent = screen;
     }
 
-    function drawEverything() {
-      drawRectangle(0, 0, canvas.width, canvas.height, 'black');
-      drawNet();
-      drawRectangle(0, playerPaddleY, paddleWidth, paddleHeight, 'white');
-      drawRectangle(canvas.width - paddleWidth, aiPaddleY, paddleWidth, paddleHeight, 'white');
-      drawCircle(ballX, ballY, ballRadius, 'white');
+    function updateGame() {
+      // Move ball
+      ballX += ballDirX;
+      ballY += ballDirY;
+
+      // Bounce top and bottom
+      if (ballY <= 1 || ballY >= height - 2) {
+        ballDirY = -ballDirY;
+      }
+
+      // Ball hits player paddle
+      if (ballX === 2 && (ballY === playerPaddleY || ballY === playerPaddleY -1 || ballY === playerPaddleY +1)) {
+        ballDirX = 1;
+      }
+
+      // Ball hits AI paddle
+      if (ballX === width - 3 && (ballY === aiPaddleY || ballY === aiPaddleY -1 || ballY === aiPaddleY +1)) {
+        ballDirX = -1;
+      }
+
+      // Score and reset if ball passes paddles
+      if (ballX <= 0 || ballX >= width -1) {
+        ballX = Math.floor(width / 2);
+        ballY = Math.floor(height / 2);
+        ballDirX = ballDirX === 1 ? -1 : 1;
+      }
+
+      // Simple AI moves towards ball
+      if (aiPaddleY < ballY) aiPaddleY++;
+      else if (aiPaddleY > ballY) aiPaddleY--;
+
+      drawGame();
     }
 
-    function gameLoop() {
-      updatePositions();
-      drawEverything();
-      requestAnimationFrame(gameLoop);
+    // Control player paddle with keyboard arrows (Up/Down)
+    document.onkeydown = function(e) {
+      if (e.key === 'ArrowUp' && playerPaddleY > 1) playerPaddleY--;
+      if (e.key === 'ArrowDown' && playerPaddleY < height - 2) playerPaddleY++;
+      drawGame();
     }
 
-    gameLoop();
+    drawGame();
+    setInterval(updateGame, 150);
   </script>
 </body>
 </html>
+
