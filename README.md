@@ -115,10 +115,10 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 
 <details><summary>Tuesday Sept 23rd, 2025</summary>
 
-### Title
-1.
-1.
-1.
+### Worked on CSS website today
+1. learned inline css
+1. Made css website
+1. Made an animation with css
 
 </details>
 
