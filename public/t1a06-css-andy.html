@@ -1,0 +1,39 @@
+<style>
+body {
+color: white;
+background-color: skyblue;
+font-size: 30px;
+}
+  h1 {
+background-color: purple;
+    color: white;
+border: 15px groove black;
+
+  }
+/* Keyframes for the animation */
+@keyframes slide {
+  0% {
+    transform: translateX(0);
+    background-color: red;
+  }
+  50% {
+    transform: translateX(200px);
+    background-color: blue;
+  }
+  100% {
+    transform: translateX(0);
+    background-color: red;
+  }
+}
+
+/* Apply the animation to the box */
+.box {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  animation: slide 2s ease-in-out infinite;
+}
+</style>
+  <h1>t1a06-css-andy.html</h1>
+<p>test</p>
+<div class="box"></div>
