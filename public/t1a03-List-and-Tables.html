@@ -1,8 +1,10 @@
 <style>
-  background-color: #000080;
-  color: white;
-  font-family: "Times New Roman", serif;
-  font-size: 30px;
+  body {
+    background-color: #000080;
+    color: white;
+    font-family: "Times New Roman", serif;
+    font-size: 30px;
+  }
 </style>
 
 <h1 align="center">t1a03-List-and-Tables-by-Andy</h1>
@@ -32,11 +34,18 @@ then make a link and image table with border = 0<br><br><br>
 
 Load an image and get it to move 10 pixels to the left using the button below<br>
 
-<img id="myImage01" src="https://www.searchengineinsight.com/wp-content/uploads/2022/11/maxresdefault-1.jpg" style="position: relative; left: 0; width: 50px; height: 50px;"><br>
+<img id="myImage01" src="https://www.searchengineinsight.com/wp-content/uploads/2022/11/maxresdefault-1.jpg" style="position: relative; left: 0px; width: 50px; height: 50px;"><br>
 
-<input type="button" value="Go left" onclick="{
-  document.getElementById('myImage01');
-  document.getElementById('myDiv01').innerHTML = 'It went left';
-}">
+<input type="button" value="Go left" onclick="moveLeft()">
 
 <div id="myDiv01">...</div>
+
+<script>
+  function moveLeft() {
+    const img = document.getElementById('myImage01');
+    let currentLeft = parseInt(img.style.left, 10) || 0;
+    currentLeft -= 10; // move 10px left
+    img.style.left = currentLeft + 'px';
+    document.getElementById('myDiv01').innerHTML = 'It went left';
+  }
+</script>
