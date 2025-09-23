@@ -1,5 +1,5 @@
 # My Index
-https://andy-t800.github.io/gamedev11-Andy-2025/index.html
+https://andy-t800.github.io/gamedev11-Andy-2025/public/index.html
 
 # School Course GameDev 11-12, Learning Journal for Andy, Semester 1 2025
 
