@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Changer</title>
+    <style>
+        body {
+            background-color: #ADD8E6;
+            color: white;
+            font-size: 25px;
+        }
+        .padded-image {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px;
+        }
+        .image-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            color: black;
+        }
+        button {
+            margin: 20px;
+            padding: 10px 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1 align="center">t1a01-simple-andy</h1>
+    Hello world<br> 
+    <a href="https://openai.com/chatgpt/">Visit openai.com></a><br>
+    
+    <button onclick="changeBackground()">Change Background Color</button>
+    
+    <div class="image-container">
+        <img width="300" src="https://images.pexels.com/photos/20787/pexels-photo.jpg?cs=srgb&dl=animal-cat-adorable-20787.jpg&fm=jpg" alt="Cat Image." class="padded-image">
+        <img width="300" src="Carlos.png" class="padded-image">
+        <img width="300" src="pie.png" class="padded-image">
+        <img width="300" src="deer.png" class="padded-image">
+        <img width="300" src="littleducks.png" class="padded-image">
+    </div>
+
+    <script>
+        function changeBackground() {
+            const colors = ['#ADD8E6', '#FFB6C1', '#90EE90', '#FFD700', '#FF6347', '#FF69B4'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            document.body.style.backgroundColor = randomColor;
+        }
+    </script>
+</body>
+</html>
