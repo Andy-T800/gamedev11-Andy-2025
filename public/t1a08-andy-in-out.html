@@ -4,6 +4,14 @@ function updateSpan() {
 var inputValue = document.getElementById("userInput").value;
 document.getElementById("displayText").textContent = inputValue;
 }
+function spamtext() {
+var inputValue = document.getElementById("userInput").value;
+var spammed = "";
+for (var i = 0; i < 10; i++) {
+spammed += inputValue + " ";
+}
+document.getElementById("displayText").textContent = spammed.trim();
+}
 function double() {
 var inputValue = document.getElementById("numberinput").value;
 var number = parseFloat(inputValue);	
@@ -30,6 +38,7 @@ padding : 5px;
 <span id="displayText">Hello!</span><br><br>
 <input type="text" id="userInput" placeholder="Type something..."><br><br>
 <button onclick="updateSpan()">Update Text</button>
+<button onclick="spamtext()">Spams the text</button>
 <br>
 <br>
 <span id="numberdisplay">Doubled Number</span>
