@@ -1,0 +1,43 @@
+<head>
+<script>
+function updateSpan() {
+var inputValue = document.getElementById("numberinput").value;
+document.getElementById("displayText").textContent = inputValue;
+}
+function double() {
+var inputValue = document.getElementById("numberinput").value;
+var number = parseFloat(inputValue);	
+var result = number * 2;
+document.getElementById("numberdisplay").textContent = "Double: " + result;
+}
+</script>
+<style>
+body {
+background-color: #bb2b1b;
+color: white;
+font-size: 18px;
+font-family: arial;
+margin: 0;
+}
+h1 {
+background-color: grey;
+padding : 5px;
+}
+</style>
+</head>
+<body>
+<h1 align=center>t1a08-andy-in-out</h1>
+<span id="displayText">Hello!</span><br><br>
+<input type="text" id="userInput" placeholder="Type something..."><br><br>
+<button onclick="updateSpan()">Update Text</button>
+<br>
+<br>
+<span id="numberdisplay">Doubled Number</span>
+<br>
+<br>
+<input type="number" min="1" max="100" step="1" placeholder="testing..." id="numberinput">
+<br>
+<br>
+<button onclick="double()">Double Number</button>
+<br>
+</body>
