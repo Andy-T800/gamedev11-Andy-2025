@@ -1,0 +1,60 @@
+<h2 align="center">t1a09-variables-andy.html</h2>
+
+Show correct use of const, var, integer, character, Boolean, float and string.
+
+<input id="myNum01" type="text" value="Fred" >
++
+<input id="myNum02" type="text" value="Mary" >
+<br>
+<span id="mySpan01">...</span>
+<br>
+
+<input type="button" value="add (concatenate) strings" onclick="{
+  let myFred = document.getElementById('myNum01').value;
+  var myMary = document.getElementById('myNum02').value;
+  const myOut = document.getElementById('mySpan01');
+  myOut.innerHTML = myFred + ' ' + myMary;
+}">
+
+<br><br><br><br><br>
+
+<label for="intInput">Integer (number without decimals):</label>
+<input id="intInput" type="number" value="42" step="1">
+
+<label for="floatInput">Float (decimal number):</label>
+<input id="floatInput" type="number" value="3.14" step="any">
+
+<label for="boolInput">Boolean (true/false):</label>
+<select id="boolInput">
+  <option value="true">true</option>
+  <option value="false" selected>false</option>
+</select>
+
+<label for="charInput">Character (one letter):</label>
+<input id="charInput" type="text" maxlength="1" value="Z">
+
+<button id="btnShowVars">Show All Variable Types</button>
+
+<div id="output">Output will appear here...</div>
+
+<script>
+  // Button to show all variable types
+  document.getElementById('btnShowVars').addEventListener('click', () => {
+    let myInteger = Math.round(Number(document.getElementById('intInput').value));
+    let myFloat = parseFloat(document.getElementById('floatInput').value);
+    var myBoolean = (document.getElementById('boolInput').value === 'true');
+    const myChar = document.getElementById('charInput').value.charAt(0) || '';
+    let myString = "Sample string";
+
+    const myOut = document.getElementById('output');
+
+    myOut.innerHTML = `
+      <strong>Variables Demo:</strong><br>
+      Integer: ${myInteger} (type: ${typeof myInteger})<br>
+      Float: ${myFloat} (type: ${typeof myFloat})<br>
+      Boolean: ${myBoolean} (type: ${typeof myBoolean})<br>
+      Character: '${myChar}' (type: ${typeof myChar})<br>
+      String: "${myString}" (type: ${typeof myString})
+    `;
+  });.
+</script>
