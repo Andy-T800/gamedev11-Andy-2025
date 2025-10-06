@@ -1,0 +1,90 @@
+ <title>t1a11-for-arrays-andy.html</title>
+  <style>
+body {
+font-size: 16px;
+}
+</style>
+<script>
+    // Original array
+    let myArray = ['Fred', 'Mary', 'Zizzy', 'John', 'Abrams', 'Connor', 'Jake', 'Jason', 'Jareb', 'Cecil'];
+
+    // 7 other arrays
+    let numberArray = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+
+    let booleanArray = [true, false, true, false, true, true, false];
+
+    let mixedArray = ['Alice', 25, true, null, 'Developer', 99.5];
+
+    let nestedArray = [
+      ['Math', 90],
+      ['Science', 85],
+      ['History', 78]
+    ];
+
+    let citiesArray = new Array();
+    citiesArray[0] = 'New York';
+    citiesArray[1] = 'London';
+    citiesArray[2] = 'Tokyo';
+    citiesArray[3] = 'Paris';
+    citiesArray[4] = 'Berlin';
+
+    let fruitsArray = ['Apple', 'Banana', 'Cherry', 'Date', 'Fig', 'Grape'];
+
+    let daysArray = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    // Generic function to show any array
+    function showArray(array, maxInputId, outputDivId) {
+      let max = parseInt(document.getElementById(maxInputId).value);
+      let result = '';
+
+      for (let i = 0; i < max && i < array.length; i++) {
+        // If array entry is an array itself (for nestedArray)
+        if (Array.isArray(array[i])) {
+          result += 'Loop #: ' + i + ' — Array Entry: ' + array[i].join(' - ') + '<br>';
+        } else {
+          result += 'Loop #: ' + i + ' — Array Entry: ' + array[i] + '<br>';
+        }
+      }
+
+      document.getElementById(outputDivId).innerHTML = result;
+    }
+  </script>
+</head>
+<body>
+
+  <h2>t1a11-for-arrays-andy.html</h2>
+
+  Max Array Entry: <input type="text" id="myText01" value="10"><br>
+
+  <!-- Button for original myArray -->
+  <input type="button" value="Show Names" onclick="showArray(myArray, 'myText01', 'myDiv01')"><br>
+  <div id="myDiv01">...</div><br>
+
+  <!-- Button for numberArray -->
+  <input type="button" value="Show Numbers" onclick="showArray(numberArray, 'myText01', 'myDiv02')"><br>
+  <div id="myDiv02">...</div><br>
+
+  <!-- Button for booleanArray -->
+  <input type="button" value="Show Booleans" onclick="showArray(booleanArray, 'myText01', 'myDiv03')"><br>
+  <div id="myDiv03">...</div><br>
+
+  <!-- Button for mixedArray -->
+  <input type="button" value="Show Mixed Types" onclick="showArray(mixedArray, 'myText01', 'myDiv04')"><br>
+  <div id="myDiv04">...</div><br>
+
+  <!-- Button for nestedArray -->
+  <input type="button" value="Show Nested Array (Grades)" onclick="showArray(nestedArray, 'myText01', 'myDiv05')"><br>
+  <div id="myDiv05">...</div><br>
+
+  <!-- Button for citiesArray -->
+  <input type="button" value="Show Cities" onclick="showArray(citiesArray, 'myText01', 'myDiv06')"><br>
+  <div id="myDiv06">...</div><br>
+
+  <!-- Button for fruitsArray -->
+  <input type="button" value="Show Fruits" onclick="showArray(fruitsArray, 'myText01', 'myDiv07')"><br>
+  <div id="myDiv07">...</div><br>
+
+  <!-- Button for daysArray -->
+  <input type="button" value="Show Days of Week" onclick="showArray(daysArray, 'myText01', 'myDiv08')"><br>
+  <div id="myDiv08">...</div><br> 
+</body>
