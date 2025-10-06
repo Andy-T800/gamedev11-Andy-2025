@@ -1,7 +1,0 @@
-  <h1>t1a10-for-loops-andy</h1>
-  <div id="output"></div>
-  <script>
-    for (let i = 0; i <= 10; i++) {
-      output.innerHTML += i + "<br>";
-    }
-  </script>
