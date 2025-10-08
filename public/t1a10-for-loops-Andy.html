@@ -1,21 +1,56 @@
-<style>
-  body {
-    background-color: skyblue;
-    color: #FFDAB9;
-    font-family: Arial, sans-serif;
-  }
-</style>
+  <h1>JavaScript For Loop Examples</h1>
 
-<h1>Numbers from 0 to 10:</h1>
-<div id="output"></div>
+  <div class="section">
+    <h2>Numbers from 0 to 10 (Even or Odd)</h2>
+    <div id="output1"></div>
+  </div>
 
-<script>
-  for (let i = 0; i <= 10; i++) {
-    if (i % 2 === 0) {
-      output.innerHTML += i + " is even<br>";
-    } else {
-      output.innerHTML += i + " is odd<br>";
+  <div class="section">
+    <h2>Countdown from 10 to 0</h2>
+    <div id="output2"></div>
+  </div>
+
+  <div class="section">
+    <h2>Multiplication Table for 5</h2>
+    <div id="output3"></div>
+  </div>
+
+  <div class="section">
+    <h2>Fruits List</h2>
+    <div id="output4"></div>
+  </div>
+
+  <script>
+    const output1 = document.getElementById("output1");
+    const output2 = document.getElementById("output2");
+    const output3 = document.getElementById("output3");
+    const output4 = document.getElementById("output4");
+
+    // Even or Odd from 0 to 10
+    for (let i = 0; i <= 10; i++) {
+      if (i % 2 === 0) {
+        output1.innerHTML += `<code>${i}</code> is even<br>`;
+      } else {
+        output1.innerHTML += `<code>${i}</code> is odd<br>`;
+      }
     }
-  }
-</script>
+
+    // Countdown from 10 to 0
+    for (let i = 10; i >= 0; i--) {
+      output2.innerHTML += `<code>${i}</code><br>`;
+    }
+
+    // Multiplication table for 5
+    const number = 5;
+    for (let i = 1; i <= 10; i++) {
+      let result = number * i;
+      output3.innerHTML += `<code>${number} x ${i} = ${result}</code><br>`;
+    }
+
+    // Loop through array of fruits
+    const fruits = ["Apple", "Banana", "Cherry", "Dragonfruit"];
+    for (let i = 0; i < fruits.length; i++) {
+      output4.innerHTML += `Fruit ${i + 1}: <code>${fruits[i]}</code><br>`;
+    }
+  </script>
 
