@@ -1,30 +1,28 @@
 <script>
 class myAnimal {
-constructor(passName, passAge) {
-this.myName = passName;
-this.myAge = passAge;
-}
-myShow(){
-document.getElementById('myDiv01').innerHTML = 'Hello' + this.myName+' <br>'
-}
+  constructor(passName, passAge) {
+    this.myName = passName;
+    this.myAge = passAge;
+  }
 
-} //end class myAnimal
+  myShow() {
+    document.getElementById('myDiv01').innerHTML = 'Hello ' + this.myName + '<br>';
+  }
+}
 </script>
 
-<h2 align=center>t1a13-extend-class-by-andy.html</h2>
-
+<h2 align="center">t1a13-extend-class-by-andy.html</h2>
 <h4>Example extending class code</h4>
 
-<input type=button value="Example Extend Class Animal" onClick="{
+<input type="button" value="Example Extend Class Animal" onClick="{
+  class yCat extends myAnimal {
+    myShow() {
+      document.getElementById('myDiv01').innerHTML = this.myName + ' is a great cat<br>';
+    }
+  } // end extended class yCat
 
-class yCat extends myAnimal {
-myShow(){
-document.getElementById('myDiv01').innerHTML = this.myName + ' is a great cat<br>
-}
-
-} // end extended class myCat
-
-myPet = new myCat('Fluffy', 14)
-myPet.myShow()
+  let myPet = new yCat('Fluffy', 14);
+  myPet.myShow();
 }">
-<div id-"myDiv01">...</div>
+
+<div id="myDiv01">...</div>
