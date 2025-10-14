@@ -1,7 +1,43 @@
-<button id=clickbutton>Click Me</button>
+<button id="clickbutton">Click Me</button>
+<p id="output">...</p>
+<br>
+
+<!-- Console log button (no need for curly braces in inline JS) -->
+<button onclick="console.log('hi')">ctrl-shift-i for console</button>
+<br><br>
+
+<!-- mouseOver and mouseOut buttons -->
+<input type="button" value="mouseOver" onmouseover="this.style.backgroundColor='green'">
+<br>
+
+<!-- Double click functionality -->
+<p id="output2">...</p>
+<input type="button" value="mousedoubleclick" ondblclick="document.getElementById('output2').textContent = 'yes'">
+<br><br>
+
+<input type="button" value="mouseOut" onmouseout="this.style.backgroundColor='lightblue'">
+<br><br>
+
+<!-- Mouse down/up test -->
+<button id="myButton">Click up/down</button>
+<br><br>
+
+<!-- JavaScript section -->
 <script>
-const btn document.getElementById('clickbutton') {
-buttonElement.addEventListener('click' function () {
-  alert('Clickbtn');
-});
+  const btn = document.getElementById('clickbutton');
+  const output = document.getElementById('output');
+
+  btn.addEventListener('click', function () {
+    output.textContent = 'Hello World';
+  });
+
+  const myButton = document.getElementById("myButton");
+
+  myButton.addEventListener("mousedown", function () {
+    console.log("Mouse button pressed on the button");
+  });
+
+  myButton.addEventListener("mouseup", function () {
+    console.log("Mouse button released on the button");
+  });
 </script>
