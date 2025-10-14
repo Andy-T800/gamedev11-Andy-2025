@@ -259,10 +259,8 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Tuesday Oct 14th, 2025</summary>
 
 ### Title
-1.
-1.
-1.
-
+Made t1a13 extend classes
+made classes in Javascript
 </details>
 
 <details><summary>Wednesday Oct 15th, 2025</summary>
