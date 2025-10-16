@@ -1,49 +1,57 @@
-<pre id=p></pre><script>
-w=40;h=15;
-pp=h/2|0;ap=h/2|0;
-bx=w/2|0;by=h/2|0;
-bdx=1;bdy=1;
-ps=0;as=0;
-d=document;
-p=d.getElementById('p');
-let aiMoveCounter=0;
-function dG(){
-s='Player '+ps+'  AI '+as+'\n';
-for(y=0;y<h;y++){
-for(x=0;x<w;x++){
-if(x==0||x==w-1)s+='|';
-else if(y==0||y==h-1)s+='-';
-else if(x==1&&y>=pp-1&&y<=pp+1)s+='|';
-else if(x==w-2&&y>=ap-1&&y<=ap+1)s+='|';
-else if(x==bx&&y==by)s+='O';
-else s+=' ';
-}
-s+='\n'
-}
-p.textContent=s;
-}
-function uG(){
-bx+=bdx;by+=bdy;
-if(by<=1||by>=h-2)bdy=-bdy;
-if(bx==2&&by>=pp-1&&by<=pp+1)bdx=1;
-if(bx==w-3&&by>=ap-1&&by<=ap+1)bdx=-1;
-if(bx<=0){as++;reset()}
-else if(bx>=w-1){ps++;reset()}
-// AI moves only every 2 calls to slow it down
-aiMoveCounter++;
-if(aiMoveCounter%1===0){
-  if(ap<by)ap++;
-  else if(ap>by)ap--;
-}
-dG();
-}
-function reset(){
-bx=w/2|0;by=h/2|0;bdx=bdx>0?-1:1;bdy=1;
-}
-d.onkeydown=e=>{
-if(e.key=='ArrowUp'&&pp>1)pp--;
-if(e.key=='ArrowDown'&&pp<h-2)pp++;
-}
-setInterval(uG,100);
-dG();
-</script>
+<head>
+  <title>Pong</title>
+  <style>canvas{background:black;display:block;margin:0 auto;border:2px solid white}</style>
+</head>
+<body>
+  <canvas id="c" width="800" height="500"></canvas>
+  <script>
+    const c = document.getElementById('c');
+    const ctx = c.getContext('2d');
+    const pH = 100, pW = 10, bS = 10;
+    let pY = c.height/2 - pH/2, aiY = pY, bX = c.width/2, bY = c.height/2, bVX = 5, bVY = 5;
+
+    c.onmousemove = e => {
+      const rect = c.getBoundingClientRect();
+      pY = e.clientY - rect.top - pH/2;
+    };
+
+    function loop(){
+      // Move ball
+      bX += bVX; bY += bVY;
+      if(bY < 0 || bY > c.height) bVY = -bVY;
+
+      // AI paddle
+      let aiC = aiY + pH/2;
+      if(aiC < bY - 35) aiY += 6;
+      else if(aiC > bY + 35) aiY -= 6;
+
+      // Ball collision with paddles
+      if(bX < pW && bY > pY && bY < pY + pH) bVX = -bVX;
+      if(bX > c.width - pW && bY > aiY && bY < aiY + pH) bVX = -bVX;
+
+      // Reset ball if out
+      if(bX < 0 || bX > c.width){
+        bX = c.width/2; bY = c.height/2; bVX = -bVX; bVY = 5;
+      }
+
+      // Draw everything
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.fillStyle = 'white';
+
+      // Player paddle
+      ctx.fillRect(0, pY, pW, pH);
+      // AI paddle
+      ctx.fillRect(c.width - pW, aiY, pW, pH);
+      // Ball
+      ctx.beginPath();
+      ctx.arc(bX, bY, bS, 0, Math.PI*2);
+      ctx.fill();
+
+      requestAnimationFrame(loop);
+    }
+
+    loop();
+  </script>
+</body>
+</html>
