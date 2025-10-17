@@ -18,7 +18,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details ><summary>Monday Sept 8th, 2025</summary>
 
 ### Title
-1.
+1. Made simple website
 1.
 1.
 
@@ -74,7 +74,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Tuesday Sept 16th, 2025</summary>
 
 ### Title
-1.
+1. 
 1.
 1.
 
@@ -266,7 +266,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Wednesday Oct 15th, 2025</summary>
 
 ### Title
-1.
+1. Began work on edge impulse ai
 1.
 1.
 
@@ -275,8 +275,8 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Thursday Oct 16th, 2025</summary>
 
 ### Title
-1.
-1.
+1. Finished my Edgeimpulse image recognition ai
+1. Created website for edgeimpulse ai
 1.
 
 </details>
