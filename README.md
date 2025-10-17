@@ -284,8 +284,8 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Friday Oct 17th, 2025</summary>
 
 ### Title
-1.
-1.
+1. Catchup day
+1. Worked on finishing edge impulse website
 1.
 
 </details>
