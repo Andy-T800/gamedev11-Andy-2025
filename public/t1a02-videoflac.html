@@ -1,26 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Square Calculator</title>
+
+<style>
+  body {
+    background: linear-gradient(to bottom right, skyblue, lightseagreen);
+    color: white;
+    font-family: "Calibri", sans-serif;
+    text-align: center;
+    padding: 40px;
+  }
+
+  h2 {
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .container {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    display: inline-block;
+    padding: 30px 50px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  input[type="number"] {
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    text-align: center;
+    font-size: 16px;
+    width: 100px;
+    margin-bottom: 10px;
+  }
+
+  input[type="button"] {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: white;
+    color: teal;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  input[type="button"]:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.05);
+  }
+
+  #mySpan01 {
+    display: block;
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+</style>
 
 <script>
   function mySquareFunction() {
-    // Fix variable names and parsing
     let myIn01 = parseFloat(document.getElementById('myNum01').value);
-    
-    // Calculate the square
     let myAnswer = myIn01 * myIn01;
-    
-    // Update the output span with proper string concatenation
     document.getElementById('mySpan01').innerHTML = myIn01 + ' squared = ' + myAnswer;
   }
 </script>
-<style>
-  background-color: skyblue;
-  color: white;
-  font-family: Calibri;
-</style>
+</head>
 
-<h2 align="center">t1a02-videoflac-Andy.html</h2>
+<body>
+  <h2>🌟 Square Calculator 🌟</h2>
+  <div class="container">
+    <label for="myNum01"><b>Input a number:</b></label><br>
+    <input id="myNum01" type="number" value="4"><br><br>
 
-Input: <input id="myNum01" type="number" value="4"><br>
-Event: <input type="button" value="myEvent squares" onclick="mySquareFunction()"><br>
+    <input type="button" value="Square It!" onclick="mySquareFunction()"><br>
 
-Output: <span id="mySpan01">...</span>
-
+    <span id="mySpan01">...</span>
+  </div>
+</body>
+</html>
