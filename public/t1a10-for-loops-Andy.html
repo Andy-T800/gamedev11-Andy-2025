@@ -1,11 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>t1a10-forloop-andy.html</title>
+
 <style>
   body {
-background-color: skyblue;
-  color: white;
-  font-size: 16px;
+    background: linear-gradient(to bottom right, skyblue, royalblue);
+    color: white;
+    font-family: "Calibri", sans-serif;
+    font-size: 16px;
+    margin: 0;
+    padding: 30px;
+    text-align: center;
+  }
+
+  h1 {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .section {
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 60%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    text-align: left;
+  }
+
+  h2 {
+    color: #fff;
+    border-bottom: 2px solid rgba(255,255,255,0.5);
+    padding-bottom: 5px;
+  }
+
+  code {
+    background-color: rgba(255,255,255,0.3);
+    padding: 3px 6px;
+    border-radius: 4px;
+    color: #002b5b;
+    font-weight: bold;
+  }
+
+  .footer {
+    margin-top: 40px;
+    font-size: 14px;
+    opacity: 0.8;
   }
 </style>
-<h1>JavaScript For Loop Examples</h1>
+</head>
+
+<body>
+  <h1>🌟 JavaScript For Loop Examples 🌟</h1>
 
   <div class="section">
     <h2>Numbers from 0 to 10 (Even or Odd)</h2>
@@ -25,6 +73,10 @@ background-color: skyblue;
   <div class="section">
     <h2>Fruits List</h2>
     <div id="output4"></div>
+  </div>
+
+  <div class="footer">
+    <em>Created by Andy • JavaScript For Loop Practice</em>
   </div>
 
   <script>
@@ -60,4 +112,7 @@ background-color: skyblue;
       output4.innerHTML += `Fruit ${i + 1}: <code>${fruits[i]}</code><br>`;
     }
   </script>
+</body>
+</html>
+
 
