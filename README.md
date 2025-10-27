@@ -296,7 +296,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details ><summary>Monday Oct 20th, 2025</summary>
 
 ### Title
-1.
+1. Catchup/Work Block
 1.
 1.
 
@@ -305,7 +305,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Tuesday Oct 21st, 2025</summary>
 
 ### Title
-1.
+1. Catchup/Work Block
 1.
 1.
 
@@ -314,7 +314,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Wednesday Oct 22nd, 2025</summary>
 
 ### Title
-1.
+1. Catchup/Work Block
 1.
 1.
 
@@ -323,7 +323,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Thursday Oct 23rd, 2025</summary>
 
 ### Title
-1.
+1. Catchup/Work Block
 1.
 1.
 
@@ -343,7 +343,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details ><summary>Monday Oct 27th, 2025</summary>
 
 ### Title
-1.
+1. Catchup/Work Block
 1.
 1.
 
