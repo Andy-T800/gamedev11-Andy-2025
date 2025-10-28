@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stickman Physics Sandbox</title>
+<style>
+  body {
+    margin: 0;
+    background: #111;
+    color: white;
+    font-family: sans-serif;
+    overflow: hidden;
+  }
+  #menu {
+    position: absolute;
+    top: 10px; left: 10px;
+    background: rgba(0,0,0,0.6);
+    padding: 10px;
+    border-radius: 8px;
+    z-index: 10;
+  }
+  button {
+    display: block;
+    margin: 5px 0;
+    width: 160px;
+    background: #333;
+    color: white;
+    border: 1px solid #666;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  button:hover { background: #555; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<div id="menu">
+  <h3>Stickman Sandbox</h3>
+  <button onclick="spawnStickman()">Spawn Stickman</button>
+  <button onclick="spawnBox()">Spawn Box</button>
+  <button onclick="toggleGravity()">Toggle Gravity</button>
+  <button onclick="toggleSlowMotion()">Toggle Slow Motion</button>
+  <button onclick="resetWorld()">Reset World</button>
+</div>
+
+<canvas id="world"></canvas>
+
+<!-- Matter.js -->
+<script src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
+<script>
+const { Engine, Render, Runner, Bodies, Composite, Constraint, Mouse, MouseConstraint, Body, Events } = Matter;
+
+const canvas = document.getElementById("world");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+let engine = Engine.create();
+let world = engine.world;
+world.gravity.y = 1;
+
+let render = Render.create({
+  canvas,
+  engine,
+  options: {
+    width: innerWidth,
+    height: innerHeight,
+    wireframes: false,
+    background: "#222"
+  }
+});
+
+Render.run(render);
+const runner = Runner.create();
+Runner.run(runner, engine);
+
+// Always present floor
+const floor = Bodies.rectangle(canvas.width / 2, canvas.height - 20, canvas.width * 2, 60, {
+  isStatic: true,
+  render: { fillStyle: "#444" }
+});
+Composite.add(world, floor);
+
+let gravityEnabled = true;
+let slowMotion = false;
+
+// === Stickman Creation ===
+function createStickman(x, y) {
+  const head = Bodies.circle(x, y - 60, 15, { friction: 0.8, restitution: 0.3, render: { fillStyle: "#fff" } });
+  const torso = Bodies.rectangle(x, y, 20, 60, { friction: 0.8, render: { fillStyle: "#ddd" } });
+  const lArm = Bodies.rectangle(x - 30, y - 10, 40, 10, { friction: 0.8, render: { fillStyle: "#ccc" } });
+  const rArm = Bodies.rectangle(x + 30, y - 10, 40, 10, { friction: 0.8, render: { fillStyle: "#ccc" } });
+  const lLeg = Bodies.rectangle(x - 10, y + 60, 10, 40, { friction: 0.8, render: { fillStyle: "#bbb" } });
+  const rLeg = Bodies.rectangle(x + 10, y + 60, 10, 40, { friction: 0.8, render: { fillStyle: "#bbb" } });
+
+  const joints = [
+    Constraint.create({ bodyA: head, bodyB: torso, length: 35, stiffness: 0.7 }),
+    Constraint.create({ bodyA: torso, bodyB: lArm, pointA: { x: -10, y: -20 }, pointB: { x: 20, y: 0 }, stiffness: 0.5 }),
+    Constraint.create({ bodyA: torso, bodyB: rArm, pointA: { x: 10, y: -20 }, pointB: { x: -20, y: 0 }, stiffness: 0.5 }),
+    Constraint.create({ bodyA: torso, bodyB: lLeg, pointA: { x: -5, y: 30 }, pointB: { x: 0, y: -20 }, stiffness: 0.7 }),
+    Constraint.create({ bodyA: torso, bodyB: rLeg, pointA: { x: 5, y: 30 }, pointB: { x: 0, y: -20 }, stiffness: 0.7 })
+  ];
+
+  const parts = [head, torso, lArm, rArm, lLeg, rLeg, ...joints];
+  Composite.add(world, parts);
+
+  // Destructible joints
+  Events.on(engine, "afterUpdate", () => {
+    joints.forEach((joint, i) => {
+      const dx = (joint.bodyA.position.x + (joint.pointA?.x || 0)) -
+                 (joint.bodyB.position.x + (joint.pointB?.x || 0));
+      const dy = (joint.bodyA.position.y + (joint.pointA?.y || 0)) -
+                 (joint.bodyB.position.y + (joint.pointB?.y || 0));
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist > 100) {
+        Composite.remove(world, joint);
+      }
+    });
+  });
+}
+
+// === Object Spawning ===
+function spawnStickman() {
+  createStickman(Math.random() * canvas.width, 200);
+}
+
+function spawnBox() {
+  const box = Bodies.rectangle(Math.random() * canvas.width, 100, 60, 60, {
+    restitution: 0.2,
+    friction: 0.9,
+    render: { fillStyle: "#884" }
+  });
+  Composite.add(world, box);
+}
+
+// === Controls ===
+function toggleGravity() {
+  gravityEnabled = !gravityEnabled;
+  world.gravity.y = gravityEnabled ? 1 : 0;
+}
+
+function toggleSlowMotion() {
+  slowMotion = !slowMotion;
+  runner.delta = slowMotion ? 1000 / 60 / 3 : 1000 / 60;
+}
+
+function resetWorld() {
+  Composite.clear(world);
+  Composite.add(world, floor);
+}
+
+// === Mouse Drag ===
+const mouse = Mouse.create(render.canvas);
+const mouseConstraint = MouseConstraint.create(engine, {
+  mouse,
+  constraint: { stiffness: 0.2, render: { visible: false } }
+});
+Composite.add(world, mouseConstraint);
+render.mouse = mouse;
+
+// === Resize ===
+window.addEventListener("resize", () => {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+});
+
+// === Start ===
+createStickman(300, 200);
+</script>
+</body>
+</html>
