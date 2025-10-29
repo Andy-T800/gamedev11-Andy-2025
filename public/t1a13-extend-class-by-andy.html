@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>t1a13-extend-class-by-andy.html</title>
+</head>
+<body>
+<h2 align="center">t1a13-extend-class-by-andy.html</h2>
+<h4>Example extending class code</h4>
+
 <script>
 class myAnimal {
   constructor(passName, passAge) {
@@ -6,23 +15,51 @@ class myAnimal {
   }
 
   myShow() {
-    document.getElementById('myDiv01').innerHTML = 'Hello ' + this.myName + '<br>';
+    document.getElementById('myDiv01').innerHTML = 
+      'Hello ' + this.myName + '<br>';
+  }
+}
+
+class myCar {
+  constructor(passName, passAge) {
+    this.myName = passName;
+    this.myAge = passAge;
+  }
+
+  myShow() {
+    document.getElementById('myDiv01').innerHTML = 
+      'This car is named ' + this.myName + '<br>';
   }
 }
 </script>
 
-<h2 align="center">t1a13-extend-class-by-andy.html</h2>
-<h4>Example extending class code</h4>
-
+<!-- Button for Animal Example -->
 <input type="button" value="Example Extend Class Animal" onClick="{
   class yCat extends myAnimal {
     myShow() {
-      document.getElementById('myDiv01').innerHTML = this.myName + ' is a great cat<br>';
+      document.getElementById('myDiv01').innerHTML = 
+        this.myName + ' is a great cat, age ' + this.myAge + '<br>';
     }
-  } // end extended class yCat
+  }
 
   let myPet = new yCat('Fluffy', 14);
   myPet.myShow();
 }">
 
+<!-- Button for Car Example -->
+<input type="button" value="Example Extend Class Car" onClick="{
+  class yTruck extends myCar {
+    myShow() {
+      document.getElementById('myDiv01').innerHTML = 
+        this.myName + ' is a powerful truck, age ' + this.myAge + ' years.<br>';
+    }
+  }
+
+  let myVehicle = new yTruck('Big Blue', 5);
+  myVehicle.myShow();
+}">
+
 <div id="myDiv01">...</div>
+
+</body>
+</html>
