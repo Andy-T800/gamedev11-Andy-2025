@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>liteRTjs Classifier</title>
 
-<!-- TensorFlow Lite runtime -->
+<!-- ✅ Correct TF.js + TFLite -->
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite@0.0.1-alpha.9"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-tflite@0.0.1-alpha.9/dist/tf-tflite.min.js"></script>
 
 <style>
   body {
@@ -41,7 +41,7 @@
     margin-top: 0.6em; cursor: pointer; font-weight: 600;
   }
   button:hover { background: #0c8045; }
-  #startCamBtn { background: #1a73e8; } /* Blue button */
+  #startCamBtn { background: #1a73e8; }
   #resetBtn { background:#d93025; }
   canvas { border: 3px solid #0f9d58; border-radius: 8px; margin-top: 20px; }
   .status {
@@ -77,9 +77,7 @@
     <button id="urlBtn">Load From URL</button>
   </div>
 
-  <!-- ✅ Added Start Webcam Button -->
   <button id="startCamBtn">Start Webcam</button>
-
   <button id="resetBtn">Reset / Stop Webcam</button>
 </div>
 
@@ -87,114 +85,118 @@
 <canvas id="canvas" width="120" height="120"></canvas>
 
 <script>
-let model=null, video, canvas, ctx, reqId=null;
-let cfg={
-  url:'tflite/ei-ei-jeremy-0unknown-1brush-2paint-v01-transfer-learning-tensorflow-lite-float32-model.5.tflite',
-  res:120, ch:3, labels:['background','brush','paint'], th:0.7
+let model = null, video, canvas, ctx, reqId = null;
+let cfg = {
+  url: 'tflite/ei-ei-jeremy-0unknown-1brush-2paint-v01-transfer-learning-tensorflow-lite-float32-model.5.tflite',
+  res: 120, ch: 3, labels: ['background', 'brush', 'paint'], th: 0.7
 };
 
-const $=id=>document.getElementById(id);
-const setStatus=t=>{ $('status').textContent=t; };
+const $ = id => document.getElementById(id);
+const setStatus = t => $('status').textContent = t;
 
-$('applyBtn').onclick=()=>{
-  cfg.res=parseInt($('res').value)||120;
-  cfg.ch=parseInt($('ch').value)||3;
-  cfg.th=parseFloat($('th').value)||0.7;
-  cfg.labels=$('labels').value.split(',').map(s=>s.trim());
-  $('canvas').width=$('canvas').height=cfg.res;
+$('applyBtn').onclick = () => {
+  cfg.res = parseInt($('res').value) || 120;
+  cfg.ch = parseInt($('ch').value) || 3;
+  cfg.th = parseFloat($('th').value) || 0.7;
+  cfg.labels = $('labels').value.split(',').map(s => s.trim());
+  $('canvas').width = $('canvas').height = cfg.res;
   setStatus(`Applied: ${cfg.res}px, ${cfg.ch}ch, ${cfg.labels.length} classes`);
 };
 
-$('defaultBtn').onclick=()=>loadModel(cfg.url);
-$('urlBtn').onclick=()=>loadModel($('urlInput').value.trim());
+$('defaultBtn').onclick = () => loadModel(cfg.url);
+$('urlBtn').onclick = () => loadModel($('urlInput').value.trim());
+$('fileInput').onchange = handleFileInput;
+$('startCamBtn').onclick = startWebcam;
+$('resetBtn').onclick = resetApp;
 
-// ✅ Custom .tflite file support
-$('fileInput').onchange=async e=>{
-  const file=e.target.files[0];
-  if(!file) return;
+async function handleFileInput(e) {
+  const file = e.target.files[0];
+  if (!file) return;
   stopLoop();
   setStatus(`Loading local model: ${file.name} ...`);
-  try{
+  try {
     const blobUrl = URL.createObjectURL(file);
     model = await tflite.loadTFLiteModel(blobUrl);
     URL.revokeObjectURL(blobUrl);
     setStatus(`✅ Loaded: ${file.name}. You can now click "Start Webcam"`);
-  }catch(err){
+  } catch (err) {
     console.error(err);
     setStatus(`❌ Failed to load model file: ${file.name}`);
   }
-};
+}
 
-// ✅ Start Webcam manually
-$('startCamBtn').onclick=startWebcam;
-
-$('resetBtn').onclick=resetApp;
-
-async function loadModel(src){
+async function loadModel(src) {
   stopLoop();
   setStatus('Loading model...');
-  try{
-    model=await tflite.loadTFLiteModel(src);
+  try {
+    model = await tflite.loadTFLiteModel(src);
     setStatus('✅ Model loaded. You can now click "Start Webcam".');
-  }catch(e){
+  } catch (e) {
     console.error(e);
     setStatus('❌ Model load failed (see console)');
   }
 }
 
-async function startWebcam(){
-  video=$('video'); canvas=$('canvas'); ctx=canvas.getContext('2d');
-  try{
-    const stream=await navigator.mediaDevices.getUserMedia({
-      video:{width:cfg.res,height:cfg.res,facingMode:'user'}, audio:false
+async function startWebcam() {
+  video = $('video');
+  canvas = $('canvas');
+  ctx = canvas.getContext('2d');
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { width: cfg.res, height: cfg.res, facingMode: 'user' }, audio: false
     });
-    video.srcObject=stream; await video.play();
+    video.srcObject = stream;
+    await video.play();
     setStatus(model ? '🎥 Webcam running, classifying...' : '🎥 Webcam running (no model loaded)');
     runLoop();
-  }catch(e){
+  } catch (e) {
     console.error(e);
     setStatus('❌ Webcam access denied or not available');
   }
 }
 
-function runLoop(){
-  if(!model) return;
-  tf.tidy(()=>{
-    ctx.drawImage(video,0,0,cfg.res,cfg.res);
-    let x=tf.browser.fromPixels(canvas,cfg.ch).div(255).expandDims(0);
-    let y=model.predict(x);
-    if(y instanceof Promise) y.then(out=>drawResult(out.dataSync()));
-    else drawResult(y.dataSync());
+function runLoop() {
+  if (!model) return;
+  tf.tidy(async () => {
+    ctx.drawImage(video, 0, 0, cfg.res, cfg.res);
+    let x = tf.browser.fromPixels(canvas, cfg.ch).div(255).expandDims(0);
+    const output = await model.predict(x);
+    const data = output.dataSync();
+    drawResult(data);
   });
-  reqId=requestAnimationFrame(runLoop);
+  reqId = requestAnimationFrame(runLoop);
 }
 
-function drawResult(scores){
-  if(!scores || scores.length===0) return;
-  let maxI=scores.indexOf(Math.max(...scores));
-  let label=cfg.labels[maxI]||'unknown';
-  let conf=scores[maxI];
-  ctx.fillStyle='rgba(0,0,0,0.7)';
-  ctx.fillRect(0,cfg.res-40,cfg.res,40);
-  ctx.fillStyle=conf>=cfg.th?'lime':'yellow';
-  ctx.font='bold 16px Inter'; ctx.textAlign='center';
-  ctx.fillText(`${label} ${(conf*100).toFixed(1)}%`,cfg.res/2,cfg.res-15);
+function drawResult(scores) {
+  if (!scores || scores.length === 0) return;
+  let maxI = scores.indexOf(Math.max(...scores));
+  let label = cfg.labels[maxI] || 'unknown';
+  let conf = scores[maxI];
+  ctx.fillStyle = 'rgba(0,0,0,0.7)';
+  ctx.fillRect(0, cfg.res - 40, cfg.res, 40);
+  ctx.fillStyle = conf >= cfg.th ? 'lime' : 'yellow';
+  ctx.font = 'bold 16px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText(`${label} ${(conf * 100).toFixed(1)}%`, cfg.res / 2, cfg.res - 15);
 }
 
-function stopLoop(){
-  if(reqId) cancelAnimationFrame(reqId), reqId=null;
-  if(video?.srcObject){
-    video.srcObject.getTracks().forEach(t=>t.stop());
-    video.srcObject=null;
+function stopLoop() {
+  if (reqId) cancelAnimationFrame(reqId), reqId = null;
+  if (video?.srcObject) {
+    video.srcObject.getTracks().forEach(t => t.stop());
+    video.srcObject = null;
   }
 }
 
-function resetApp(){
-  stopLoop(); model=null;
-  if(!ctx) ctx=$('canvas').getContext('2d');
-  ctx.clearRect(0,0,cfg.res,cfg.res);
+function resetApp() {
+  stopLoop();
+  model = null;
+  if (!ctx) ctx = $('canvas').getContext('2d');
+  ctx.clearRect(0, 0, cfg.res, cfg.res);
   setStatus('🔁 Reset. Configure and reload model.');
 }
 </script>
 </body>
+</html>
+
 </html>
