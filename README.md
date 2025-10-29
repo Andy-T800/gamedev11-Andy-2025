@@ -2,6 +2,8 @@
 https://andy-t800.github.io/gamedev11-Andy-2025/public/index.html
 # Mr Ellis links
 https://hpssjellis.github.io/my-examples-of-liteRTjs/public/index.html
+https://github.com/hpssjellis/my-examples-of-liteRTjs/tree/main/public
+https://hpssjellis.github.io/my-examples-of-liteRTjs/public/drag-class00.html
 # School Course GameDev 11-12, Learning Journal for Andy, Semester 1 2025
 
 
