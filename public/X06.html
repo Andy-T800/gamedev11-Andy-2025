@@ -4,53 +4,56 @@
 <meta charset="UTF-8">
 <title>Mini Doom+ Enhanced</title>
 <style>
-  body {
-    margin: 0;
-    overflow: hidden;
-    background: #000;
-    font-family: 'Press Start 2P', cursive;
-  }
-  canvas { display: block; }
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: #000;
+    font-family: 'Press Start 2P', cursive;
+  }
+  canvas { display: block; }
 </style>
 </head>
 <body>
 <canvas id="game"></canvas>
 <script>
 /* ============================================================
-   MINI DOOM+ ENHANCED (CLEANED VERSION)
-   ============================================================ */
+   MINI DOOM+ ENHANCED (CLEANED VERSION)
+   ============================================================ */
 
 // --- Canvas Setup ---
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+let NUM_RAYS = 0;
+let raySpacing = 2; // Pixel width of each ray column
+
 const resizeCanvas = () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  NUM_RAYS = Math.floor(canvas.width / raySpacing);
 };
 window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
+resizeCanvas(); // Initial call to set dimensions and calculate NUM_RAYS
 
 // --- Constants ---
 const TILE = 64, FOV = Math.PI / 3;
 const MAX_DEPTH = 1000, ENEMY_HP = 50;
 const PLAYER_HP = 100, SHOOT_COOLDOWN = 10;
 const MAP_WIDTH = 16, MAP_HEIGHT = 11;
-const NUM_RAYS = Math.floor(canvas.width / 2);
 let shootTimer = 0;
 
 // --- Map Data ---
 const map = [
-  "################",
-  "#1.............#",
-  "#..###...2.....#",
-  "#......##......#",
-  "#...2..........#",
-  "#......#.......#",
-  "#..............#",
-  "###...........1#",
-  "#......###.....#",
-  "#.....2........#",
-  "################"
+  "################",
+  "#1.............#",
+  "#..###...2.....#",
+  "#......##......#",
+  "#...2..........#",
+  "#......#.......#",
+  "#..............#",
+  "###...........1#",
+  "#......###.....#",
+  "#.....2........#",
+  "################"
 ];
 
 // --- Game State ---
@@ -65,50 +68,78 @@ document.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
 
 // --- Pointer Lock & Shooting ---
 document.addEventListener("click", () => {
-  if (gameOver) { location.reload(); return; }
-  document.body.requestPointerLock?.();
-  shoot();
+  if (gameOver) { location.reload(); return; }
+  document.body.requestPointerLock?.();
+  shoot();
 });
 document.addEventListener("mousemove", e => {
-  if (document.pointerLockElement === document.body && !gameOver)
-    player.angle += e.movementX * 0.002;
+  if (document.pointerLockElement === document.body && !gameOver)
+    player.angle += e.movementX * 0.002;
 });
 
 // --- Audio ---
 const loadSound = src => { const a = new Audio(src); a.volume = 0.6; return a; };
 const sfx = {
-  shoot: loadSound("https://actions.google.com/sounds/v1/weapons/laser_gun_fire_01.ogg"),
-  hit: loadSound("https://actions.google.com/sounds/v1/impacts/punch_short.ogg"),
-  hurt: loadSound("https://actions.google.com/sounds/v1/cartoon/clown_honk.ogg"),
-  pickup: loadSound("https://actions.google.com/sounds/v1/games/coin_bag.ogg")
+  shoot: loadSound("https://actions.google.com/sounds/v1/weapons/laser_gun_fire_01.ogg"),
+  hit: loadSound("https://actions.google.com/sounds/v1/impacts/punch_short.ogg"),
+  hurt: loadSound("https://actions.google.com/sounds/v1/cartoon/clown_honk.ogg"),
+  pickup: loadSound("https://actions.google.com/sounds/v1/games/coin_bag.ogg")
 };
+
+// --- Image Assets (NEW) ---
+const assets = {};
+let assetsLoaded = 0;
+const totalAssets = 5; // Update this count as you add more images
+
+function loadImage(name, src) {
+  const img = new Image();
+  img.src = src;
+  img.onload = () => {
+    assetsLoaded++;
+    if (assetsLoaded === totalAssets) {
+      console.log("All assets loaded!");
+      requestAnimationFrame(loop); // Start the game loop only after assets are loaded
+    }
+  };
+  assets[name] = img;
+}
+
+// Load enemy spritesheets
+loadImage('enemy_idle_front', 'https://www.spriters-resource.com/resources/sheets/2/1531.png?updated=1460931221'); // Doomguy idle front
+loadImage('enemy_idle_left', 'https://www.spriters-resource.com/resources/sheets/2/1531.png?updated=1460931221'); // Placeholder for left (using a different frame)
+loadImage('enemy_idle_right', 'https://www.spriters-resource.com/resources/sheets/2/1531.png?updated=1460931221'); // Placeholder for right
+loadImage('enemy_death', 'https://www.spriters-resource.com/resources/sheets/2/1531.png?updated=1460931221'); // Placeholder for death (using a different frame)
+loadImage('health_pack', 'https://www.spriters-resource.com/resources/sheets/2/1531.png?updated=1460931221'); // Using a frame from doomguy for health pack
+
 
 // --- Utilities ---
 const isWall = (x, y) => {
-  const mx = Math.floor(x / TILE), my = Math.floor(y / TILE);
-  if (my < 0 || my >= MAP_HEIGHT || mx < 0 || mx >= MAP_WIDTH) return true;
-  return "#12".includes(map[my][mx]);
+  const mx = Math.floor(x / TILE), my = Math.floor(y / TILE);
+  if (my < 0 || my >= MAP_HEIGHT || mx < 0 || mx >= MAP_WIDTH) return true;
+  return "#12".includes(map[my][mx]);
 };
 const wallType = (x, y) => map[Math.floor(y / TILE)]?.[Math.floor(x / TILE)] || "#";
 const rand = arr => arr[Math.floor(Math.random() * arr.length)];
 
 // --- Shooting ---
 function shoot() {
-  if (shootTimer > 0 || gameOver) return;
-  sfx.shoot.currentTime = 0; sfx.shoot.play();
-  bullets.push({ x: player.x, y: player.y, angle: player.angle, life: 30, flash: 5 });
-  shootTimer = SHOOT_COOLDOWN;
+  if (shootTimer > 0 || gameOver) return;
+  sfx.shoot.currentTime = 0; sfx.shoot.play();
+  bullets.push({ x: player.x, y: player.y, angle: player.angle, life: 30, flash: 5 });
+  shootTimer = SHOOT_COOLDOWN;
 }
 
 // --- Spawning ---
 const spawnEnemy = () => {
-  if (gameOver) return;
-  const p = rand([{x:800,y:600},{x:600,y:400},{x:1000,y:500},{x:700,y:700},{x:200,y:600}]);
-  enemies.push({ ...p, hp: ENEMY_HP, alive: true, cd: 0, fast: Math.random() < 0.2 });
+  if (gameOver) return;
+  const p = rand([{x:800,y:600},{x:600,y:400},{x:1000,y:500},{x:700,y:700},{x:200,y:600}]);
+  // Added `sprite` and `frame` for animation/direction control
+  enemies.push({ ...p, hp: ENEMY_HP, alive: true, cd: 0, fast: Math.random() < 0.2, sprite: 'enemy_idle_front', frame: 0 });
 };
 const spawnPack = () => {
-  if (gameOver) return;
-  packs.push(rand([{x:400,y:500},{x:700,y:300},{x:900,y:600},{x:120,y:120}]));
+  if (gameOver) return;
+  // Added `sprite` for health pack
+  packs.push({ ...rand([{x:400,y:500},{x:700,y:300},{x:900,y:600},{x:120,y:120}]), sprite: 'health_pack' });
 };
 setInterval(spawnEnemy, 5000);
 setInterval(spawnPack, 15000);
@@ -116,182 +147,248 @@ spawnEnemy();
 
 // --- Update Loop ---
 function update() {
-  if (gameOver) return;
-  const spd = 3, rot = player.angle;
-  const dx = Math.cos(rot), dy = Math.sin(rot);
-  const move = (keys["w"] ? spd : 0) - (keys["s"] ? spd * 0.7 : 0);
-  const strafe = (keys["a"] ? -spd * 0.8 : 0) + (keys["d"] ? spd * 0.8 : 0);
-  const nx = player.x + dx * move + Math.cos(rot + Math.PI/2) * strafe;
-  const ny = player.y + dy * move + Math.sin(rot + Math.PI/2) * strafe;
-  if (!isWall(nx, ny)) { player.x = nx; player.y = ny; }
+  if (gameOver) return;
+  const spd = 3, rot = player.angle;
+  const dx = Math.cos(rot), dy = Math.sin(rot);
+  const move = (keys["w"] ? spd : 0) - (keys["s"] ? spd * 0.7 : 0);
+  const strafe = (keys["a"] ? -spd * 0.8 : 0) + (keys["d"] ? spd * 0.8 : 0);
+  const nx = player.x + dx * move + Math.cos(rot + Math.PI/2) * strafe;
+  const ny = player.y + dy * move + Math.sin(rot + Math.PI/2) * strafe;
+  if (!isWall(nx, ny)) { player.x = nx; player.y = ny; }
 
-  player.bob += Math.abs(move) * 0.1 + Math.abs(strafe) * 0.1;
-  if (shootTimer > 0) shootTimer--;
+  player.bob += Math.abs(move) * 0.1 + Math.abs(strafe) * 0.1;
+  if (shootTimer > 0) shootTimer--;
 
-  // Bullets
-  for (const b of bullets) {
-    b.x += Math.cos(b.angle) * 15;
-    b.y += Math.sin(b.angle) * 15;
-    if (isWall(b.x, b.y) || --b.life <= 0) b.dead = true;
-    if (b.flash > 0) b.flash--;
-  }
-  bullets = bullets.filter(b => !b.dead);
+  // Bullets
+  for (const b of bullets) {
+    b.x += Math.cos(b.angle) * 15;
+    b.y += Math.sin(b.angle) * 15;
+    if (isWall(b.x, b.y) || --b.life <= 0) b.dead = true;
+    if (b.flash > 0) b.flash--;
+  }
+  bullets = bullets.filter(b => !b.dead);
 
-  // Enemies
-  for (const e of enemies) {
-    if (!e.alive) continue;
-    const dx = player.x - e.x, dy = player.y - e.y, d = Math.hypot(dx, dy);
-    const speed = e.fast ? 1.8 : 1.0;
-    if (d > 5) { e.x += (dx / d) * speed; e.y += (dy / d) * speed; }
-    if (d < 35 && e.cd <= 0) {
-      player.hp -= 10; e.cd = 60; sfx.hurt.currentTime = 0; sfx.hurt.play();
-      if (player.hp <= 0) gameOver = true;
-    }
-    if (e.cd > 0) e.cd--;
-  }
+  // Enemies
+  for (const e of enemies) {
+    if (!e.alive) continue;
+    const dx = player.x - e.x, dy = player.y - e.y, d = Math.hypot(dx, dy);
+    const speed = e.fast ? 1.8 : 1.0;
+    if (d > 5) { e.x += (dx / d) * speed; e.y += (dy / d) * speed; }
+    if (d < 35 && e.cd <= 0) {
+      player.hp -= 10; e.cd = 60; sfx.hurt.currentTime = 0; sfx.hurt.play();
+      if (player.hp <= 0) gameOver = true;
+    }
+    if (e.cd > 0) e.cd--;
+  }
 
-  // Bullet hits
-  for (const b of bullets) for (const e of enemies) {
-    if (!e.alive || b.dead) continue;
-    if (Math.hypot(b.x - e.x, b.y - e.y) < 25) {
-      e.hp -= 25; b.dead = true;
-      sfx.hit.currentTime = 0; sfx.hit.play();
-      if (e.hp <= 0) {
-        e.alive = false;
-        player.score += e.fast ? 200 : 100;
-      }
-    }
-  }
+  // Bullet hits
+  for (const b of bullets) for (const e of enemies) {
+    if (!e.alive || b.dead) continue;
+    if (Math.hypot(b.x - e.x, b.y - e.y) < 25) {
+      e.hp -= 25; b.dead = true;
+      sfx.hit.currentTime = 0; sfx.hit.play();
+      if (e.hp <= 0) {
+        e.alive = false;
+        player.score += e.fast ? 200 : 100;
+        e.sprite = 'enemy_death'; // Set death sprite
+        e.frame = 0; // Start death animation
+        setTimeout(() => { // Remove enemy after death animation
+          enemies = enemies.filter(enemy => enemy !== e);
+        }, 1000); // 1 second for death animation
+      }
+    }
+  }
 
-  // Health packs
-  packs = packs.filter(p => {
-    if (Math.hypot(p.x - player.x, p.y - player.y) < 40) {
-      sfx.pickup.currentTime = 0; sfx.pickup.play();
-      player.hp = Math.min(PLAYER_HP, player.hp + 30);
-      return false;
-    }
-    return true;
-  });
+  // Health packs
+  packs = packs.filter(p => {
+    if (Math.hypot(p.x - player.x, p.y - player.y) < 40) {
+      sfx.pickup.currentTime = 0; sfx.pickup.play();
+      player.hp = Math.min(PLAYER_HP, player.hp + 30);
+      return false;
+    }
+    return true;
+  });
 }
 
 // --- Rendering ---
 function castRay(rayAngle) {
-  const cos = Math.cos(rayAngle), sin = Math.sin(rayAngle);
-  for (let d = 0; d < MAX_DEPTH; d += 4) {
-    const x = player.x + cos * d, y = player.y + sin * d;
-    if (isWall(x, y)) return { depth: d, type: wallType(x, y) };
-  }
-  return { depth: MAX_DEPTH, type: "#" };
+  const cos = Math.cos(rayAngle), sin = Math.sin(rayAngle);
+  for (let d = 0; d < MAX_DEPTH; d += 4) {
+    const x = player.x + cos * d, y = player.y + sin * d;
+    if (isWall(x, y)) return { depth: d, type: wallType(x, y) };
+  }
+  return { depth: MAX_DEPTH, type: "#" };
 }
 
+// Sprite sheet details for Doomguy
+const SPRITE_WIDTH = 32; // Width of a single sprite frame
+const SPRITE_HEIGHT = 48; // Height of a single sprite frame
+const SPRITE_ROW_IDLE_FRONT = 0; // Row index for idle front frames
+const SPRITE_ROW_IDLE_LEFT = 1; // Row index for idle left frames (example)
+const SPRITE_ROW_IDLE_RIGHT = 2; // Row index for idle right frames (example)
+const SPRITE_ROW_DEATH = 3; // Row index for death frames (example)
+
 function render3D() {
-  const mid = canvas.height / 2;
-  ctx.fillStyle = "#222"; ctx.fillRect(0, 0, canvas.width, mid);
-  ctx.fillStyle = "#444"; ctx.fillRect(0, mid, canvas.width, mid);
-  const z = [];
+  const mid = canvas.height / 2;
+  ctx.fillStyle = "#222"; ctx.fillRect(0, 0, canvas.width, mid);
+  ctx.fillStyle = "#444"; ctx.fillRect(0, mid, canvas.width, mid);
+  const z = [];
 
-  for (let i = 0; i < NUM_RAYS; i++) {
-    const rayAngle = player.angle - FOV/2 + i/NUM_RAYS*FOV;
-    const hit = castRay(rayAngle);
-    const dist = hit.depth * Math.cos(rayAngle - player.angle);
-    z[i] = dist;
-    const h = (TILE * 800) / dist;
-    const shade = 200 - Math.min(200, dist * 0.2);
-    const c = hit.type === "1" ? `rgb(${shade},${shade/2},${shade/2})` :
-              hit.type === "2" ? `rgb(${shade/2},${shade/2},${shade})` :
-                                 `rgb(${shade/2},${shade/2},${shade})`;
-    ctx.fillStyle = c;
-    ctx.fillRect(i*2, mid - h/2, 2, h);
-  }
+  for (let i = 0; i < NUM_RAYS; i++) {
+    const rayAngle = player.angle - FOV/2 + i/NUM_RAYS*FOV;
+    const hit = castRay(rayAngle);
+    const dist = hit.depth * Math.cos(rayAngle - player.angle);
+    z[i] = dist;
+    const h = (TILE * 800) / dist;
+    const shade = 200 - Math.min(200, dist * 0.2);
+    const c = hit.type === "1" ? `rgb(${shade},${shade/2},${shade/2})` :
+              hit.type === "2" ? `rgb(${shade/2},${shade/2},${shade})` :
+                                 `rgb(${shade/2},${shade/2},${shade})`;
+    ctx.fillStyle = c;
+    ctx.fillRect(i * raySpacing, mid - h/2, raySpacing, h);
+  }
 
-  // Sprites
-  const all = [
-    ...enemies.filter(e=>e.alive).map(e=>({...e, enemy:true})),
-    ...packs.map(p=>({...p, pack:true}))
-  ].sort((a,b)=>Math.hypot(b.x-player.x,b.y-player.y)-Math.hypot(a.x-player.x,a.y-player.y));
+  // Sprites
+  const all = [
+    ...enemies.map(e=>({...e, enemy:true})), // Keep all enemies for death animation
+    ...packs.map(p=>({...p, pack:true}))
+  ].sort((a,b)=>Math.hypot(b.x-player.x,b.y-player.y)-Math.hypot(a.x-player.x,a.y-player.y));
 
-  for (const s of all) {
-    const dx = s.x - player.x, dy = s.y - player.y;
-    const dist = Math.hypot(dx, dy);
-    if (dist > MAX_DEPTH) continue;
-    let angle = Math.atan2(dy, dx) - player.angle;
-    if (angle > Math.PI) angle -= 2*Math.PI;
-    if (angle < -Math.PI) angle += 2*Math.PI;
-    if (Math.abs(angle) > FOV/2+0.1) continue;
-    const cd = dist * Math.cos(angle);
-    const size = (TILE * (s.enemy ? 800 : 600)) / cd;
-    const sx = canvas.width/2 + Math.tan(angle) * canvas.width/(2*Math.tan(FOV/2));
-    for (let x = sx - size/2; x < sx + size/2; x++) {
-      if (x<0||x>=canvas.width||z[Math.floor(x/2)]<cd) continue;
-      ctx.fillStyle = s.pack ? "lime" : (s.fast?"blue":"red");
-      ctx.fillRect(x, mid - size/2, 1, size);
-    }
-  }
+  for (const s of all) {
+    const dx = s.x - player.x, dy = s.y - player.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist > MAX_DEPTH) continue;
+
+    let angle = Math.atan2(dy, dx) - player.angle;
+    if (angle > Math.PI) angle -= 2*Math.PI;
+    if (angle < -Math.PI) angle += 2*Math.PI;
+    if (Math.abs(angle) > FOV/2+0.1) continue;
+
+    const cd = dist * Math.cos(angle);
+    const size = (TILE * (s.enemy ? 800 : 600)) / cd;
+    const sx = canvas.width/2 + Math.tan(angle) * canvas.width/(2*Math.tan(FOV/2));
+
+    // NEW: Draw sprite image instead of colored rectangles
+    if (assets[s.sprite]) {
+      let spriteX = 0; // Source X on the spritesheet
+      let spriteY = 0; // Source Y on the spritesheet
+
+      // Determine sprite frame based on angle for enemies
+      if (s.enemy) {
+        // Angle relative to enemy, not player
+        const enemyToPlayerAngle = Math.atan2(player.y - s.y, player.x - s.x);
+        // For simplicity, we'll just use a front-facing sprite.
+        // More advanced logic would compare enemyToPlayerAngle with player.angle
+        // to pick specific directional sprites (e.g., left, right, back, etc.)
+        // The Doomguy sprite sheet link I used is complex and has many frames.
+        // For this example, I'll pick arbitrary frames for different states.
+
+        if (!s.alive) { // Death animation
+          spriteY = SPRITE_ROW_DEATH * SPRITE_HEIGHT; // Example: 4th row for death
+          spriteX = Math.floor(s.frame / 10) % 5 * SPRITE_WIDTH; // Animate 5 death frames slowly
+          s.frame++;
+        } else { // Alive
+          // For demonstration, let's use the first frame from the idle front row
+          spriteY = SPRITE_ROW_IDLE_FRONT * SPRITE_HEIGHT;
+          // Simple walking animation: cycle through first few frames
+          spriteX = Math.floor(Date.now() / 150) % 4 * SPRITE_WIDTH; // Cycle 4 frames
+        }
+      } else if (s.pack) { // Health pack (using a different frame from Doomguy)
+        spriteX = SPRITE_WIDTH * 10; // Example: 11th sprite on the first row
+        spriteY = SPRITE_ROW_IDLE_FRONT * SPRITE_HEIGHT;
+      }
+
+      // ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+      for (let x = sx - size/2; x < sx + size/2; x++) {
+        const rayIndex = Math.floor(x / raySpacing);
+        if (rayIndex < 0 || rayIndex >= NUM_RAYS || z[rayIndex] < cd) continue;
+
+        // Calculate the column within the current sprite to draw (for vertical slices)
+        const sourceXOffset = Math.floor(((x - (sx - size/2)) / size) * SPRITE_WIDTH);
+
+        ctx.drawImage(
+          assets[s.sprite],
+          spriteX + sourceXOffset, // Source X on sprite sheet
+          spriteY, // Source Y on sprite sheet
+          1, // Source Width (1 pixel column)
+          SPRITE_HEIGHT, // Source Height
+          x, // Destination X on canvas
+          mid - size/2, // Destination Y on canvas
+          1, // Destination Width (1 pixel column)
+          size // Destination Height
+        );
+      }
+    }
+  }
 }
 
 function renderHUD() {
-  ctx.font = "16px monospace";
-  ctx.fillStyle = "#000"; ctx.fillRect(20,20,200,25);
-  const hpColor = player.hp > 50 ? "lime" : player.hp > 25 ? "yellow" : "red";
-  ctx.fillStyle = hpColor;
-  ctx.fillRect(20,20,200*(player.hp/PLAYER_HP),25);
-  ctx.strokeStyle = "#fff"; ctx.strokeRect(20,20,200,25);
-  ctx.fillStyle = "#fff";
-  ctx.fillText(`HP: ${player.hp}`, 30, 60);
-  ctx.fillText(`SCORE: ${player.score}`, 30, 80);
+  ctx.font = "16px monospace";
+  ctx.fillStyle = "#000"; ctx.fillRect(20,20,200,25);
+  const hpColor = player.hp > 50 ? "lime" : player.hp > 25 ? "yellow" : "red";
+  ctx.fillStyle = hpColor;
+  ctx.fillRect(20,20,200*(player.hp/PLAYER_HP),25);
+  ctx.strokeStyle = "#fff"; ctx.strokeRect(20,20,200,25);
+  ctx.fillStyle = "#fff";
+  ctx.fillText(`HP: ${player.hp}`, 30, 60);
+  ctx.fillText(`SCORE: ${player.score}`, 30, 80);
 
-  // Crosshair
-  ctx.strokeStyle = shootTimer > 0 ? "red" : "white";
-  const c = canvas.width/2, m = canvas.height/2;
-  ctx.beginPath();
-  ctx.moveTo(c-10,m); ctx.lineTo(c-3,m);
-  ctx.moveTo(c+3,m); ctx.lineTo(c+10,m);
-  ctx.moveTo(c,m-10); ctx.lineTo(c,m-3);
-  ctx.moveTo(c,m+3); ctx.lineTo(c,m+10);
-  ctx.stroke();
+  // Crosshair
+  ctx.strokeStyle = shootTimer > 0 ? "red" : "white";
+  const c = canvas.width/2, m = canvas.height/2;
+  ctx.beginPath();
+  ctx.moveTo(c-10,m); ctx.lineTo(c-3,m);
+  ctx.moveTo(c+3,m); ctx.lineTo(c+10,m);
+  ctx.moveTo(c,m-10); ctx.lineTo(c,m-3);
+  ctx.moveTo(c,m+3); ctx.lineTo(c,m+10);
+  ctx.stroke();
 }
 
 function renderGun() {
-  const w = 150, h = 100;
-  const y = canvas.height - h - 10 + Math.sin(player.bob)*10;
-  ctx.fillStyle = "#666"; ctx.fillRect(canvas.width/2 - w/2, y, w, h);
-  ctx.fillStyle = "#333"; ctx.fillRect(canvas.width/2 - w/2 + w*0.1, y + h*0.1, w*0.8, h*0.2);
-  const last = bullets[bullets.length-1];
-  if (last && last.flash > 0) {
-    ctx.fillStyle = "yellow";
-    ctx.globalAlpha = last.flash / 5;
-    ctx.fillRect(canvas.width/2 + w/2 - 20, y+5, 20, 20);
-    ctx.globalAlpha = 1;
-  }
+  const w = 150, h = 100;
+  const y = canvas.height - h - 10 + Math.sin(player.bob)*10;
+  ctx.fillStyle = "#666"; ctx.fillRect(canvas.width/2 - w/2, y, w, h);
+  ctx.fillStyle = "#333"; ctx.fillRect(canvas.width/2 - w/2 + w*0.1, y + h*0.1, w*0.8, h*0.2);
+  const last = bullets[bullets.length-1];
+  if (last && last.flash > 0) {
+    ctx.fillStyle = "yellow";
+    ctx.globalAlpha = last.flash / 5;
+    ctx.fillRect(canvas.width/2 + w/2 - 20, y+5, 20, 20);
+    ctx.globalAlpha = 1;
+  }
 }
 
 function renderGameOver() {
-  ctx.fillStyle = "rgba(0,0,0,0.7)";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = "red"; ctx.font = "60px sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillText("YOU DIED", canvas.width/2, canvas.height/2 - 40);
-  ctx.font = "30px sans-serif";
-  ctx.fillStyle = "white";
-  ctx.fillText(`Final Score: ${player.score}`, canvas.width/2, canvas.height/2 + 30);
-  ctx.font = "16px sans-serif";
-  ctx.fillText("Click to restart", canvas.width/2, canvas.height/2 + 70);
+  ctx.fillStyle = "rgba(0,0,0,0.7)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "red"; ctx.font = "60px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("YOU DIED", canvas.width/2, canvas.height/2 - 40);
+  ctx.font = "30px sans-serif";
+  ctx.fillStyle = "white";
+  ctx.fillText(`Final Score: ${player.score}`, canvas.width/2, canvas.height/2 + 30);
+  ctx.font = "16px sans-serif";
+  ctx.fillText("Click to restart", canvas.width/2, canvas.height/2 + 70);
 }
 
 function render() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  render3D();
-  renderGun();
-  renderHUD();
-  if (gameOver) renderGameOver();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  render3D();
+  renderGun();
+  renderHUD();
+  if (gameOver) renderGameOver();
 }
 
 // --- Main Loop ---
 (function loop() {
-  update();
-  render();
-  requestAnimationFrame(loop);
+  update();
+  render();
+  requestAnimationFrame(loop);
 })();
+
+// Start loading assets, the loop will start once they are all loaded.
+// If you remove the asset loading, call loop() directly here:
+// requestAnimationFrame(loop);
 </script>
 </body>
 </html>
