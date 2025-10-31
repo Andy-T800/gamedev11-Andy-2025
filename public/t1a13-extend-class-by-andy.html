@@ -1,9 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
 <title>t1a13-extend-class-by-andy.html</title>
+<style>
+  body { font-family: Arial; background-color: #f4f4f4; padding: 20px; }
+  h2 { text-align: center; }
+  input { margin: 5px; padding: 8px; }
+  #myDiv01 {
+    background: white;
+    border: 1px solid #aaa;
+    padding: 10px;
+    margin-top: 15px;
+    min-height: 40px;
+  }
+</style>
+</head>
 <body>
-<h2 align="center">t1a13-extend-class-by-andy.html</h2>
+<h2>t1a13-extend-class-by-andy.html</h2>
 <h4>Example extending class code</h4>
 
 <script>
+// Base classes
 class myAnimal {
   constructor(passName, passAge) {
     this.myName = passName;
@@ -12,7 +29,7 @@ class myAnimal {
 
   myShow() {
     document.getElementById('myDiv01').innerHTML = 
-      'Hello ' + this.myName + '<br>';
+      'Hello ' + this.myName + ', age ' + this.myAge + '<br>';
   }
 }
 
@@ -29,6 +46,7 @@ class myCar {
 }
 </script>
 
+<!-- Buttons to trigger examples -->
 <input type="button" value="Example Extend Class Animal" onClick="{
   class yCat extends myAnimal {
     myShow() {
@@ -36,7 +54,6 @@ class myCar {
         this.myName + ' is a great cat, age ' + this.myAge + '<br>';
     }
   }
-
   let myPet = new yCat('Fluffy', 14);
   myPet.myShow();
 }">
@@ -48,12 +65,48 @@ class myCar {
         this.myName + ' is a powerful truck, age ' + this.myAge + ' years.<br>';
     }
   }
-
   let myVehicle = new yTruck('Big Blue', 5);
   myVehicle.myShow();
 }">
 
-<div id="myDiv01">...</div>
+<!-- New examples added below -->
+<input type="button" value="Extend Class Dog (Extra Example)" onClick="{
+  class yDog extends myAnimal {
+    myShow() {
+      document.getElementById('myDiv01').innerHTML = 
+        this.myName + ' is a loyal dog, aged ' + this.myAge + ' years.<br>' +
+        'He loves to play fetch!';
+    }
+  }
+  let myDog = new yDog('Buddy', 7);
+  myDog.myShow();
+}">
+
+<input type="button" value="Extend Class Sports Car" onClick="{
+  class ySportsCar extends myCar {
+    myShow() {
+      document.getElementById('myDiv01').innerHTML = 
+        this.myName + ' is a fast sports car, just ' + this.myAge + 
+        ' years old.<br>It can go from 0 to 100 km/h in 3 seconds!';
+    }
+  }
+  let mySport = new ySportsCar('Lightning', 2);
+  mySport.myShow();
+}">
+
+<input type="button" value="Super Example (Using super)" onClick="{
+  class yBird extends myAnimal {
+    myShow() {
+      super.myShow();
+      document.getElementById('myDiv01').innerHTML += 
+        this.myName + ' can fly high in the sky!<br>';
+    }
+  }
+  let myBird = new yBird('Sky', 3);
+  myBird.myShow();
+}">
+
+<div id="myDiv01">Click a button above to see class extension examples.</div>
 
 </body>
 </html>
