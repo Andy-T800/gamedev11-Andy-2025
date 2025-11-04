@@ -1,0 +1,62 @@
+<h1 align="center">t2a18-loops-1-page-andy.html</h1>
+
+<div id="myDiv01">...</div>
+<br>
+<div id="myDiv02">...</div>
+<br>
+<div id="myDiv03">...</div>
+<br>
+<div id="myDiv04">...</div>
+<br>
+<div id="myDiv05">...</div>
+
+<script>
+// ---------- FOR LOOP ----------
+const cars = ["car", "truck", "van"];
+let output01 = "<b>Using For Loop</b><br>";
+console.log("Using for loop:");
+for (let i = 0; i < cars.length; i++) {
+  console.log(cars[i]);
+  output01 += cars[i] + "<br>";
+}
+document.getElementById('myDiv01').innerHTML = output01;
+
+// ---------- WHILE LOOP ----------
+let output02 = "<b>Using While Loop</b><br>";
+let i = 0;
+while (i < 5) {
+  console.log("Number:", i);
+  output02 += "Number: " + i + "<br>";
+  i++;
+}
+document.getElementById('myDiv02').innerHTML = output02;
+
+// ---------- forEach LOOP ----------
+let output03 = "<b>Using forEach Loop</b><br>";
+const dinos = ["T-rex", "Triceritops", "Stegasaurus"];
+dinos.forEach(function(dino, i) {
+  console.log(i + ": " + dino);
+  output03 += i + ": " + dino + "<br>";
+});
+document.getElementById('myDiv03').innerHTML = output03;
+
+// ---------- DO...WHILE LOOP ----------
+let output04 = "<b>Using Do...While Loop</b><br>";
+const countries = ["Canada", "Mexico", "France", "Germany", "Spain"]
+let k = 0;
+do {
+  console.log("Country:", countries[k]);
+  output04 += countries[k] + "<br>";
+  k++;
+} while (k < countries.length);
+document.getElementById('myDiv04').innerHTML = output04;
+
+// ---------- FOR...OF LOOP ----------
+let output05 = "<b>Using For...Of Loop</b><br>";
+const fruits = ["apple", "banana", "cherry"];
+for (const fruit of fruits) {
+  console.log(fruit);
+  output05 += fruit + "<br>";
+}
+document.getElementById('myDiv05').innerHTML = output05;
+</script>
