@@ -1,0 +1,98 @@
+<title>t1a17-Prince-Andy</title>
+<style>
+    body {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+    }
+    canvas {
+        border: 2px solid #333;
+        background-color: white;
+    }
+</style>
+<body>
+<h1 align=center>t1a17-prince-andy</h1>
+<canvas id="crownCanvas"></canvas>
+<script>
+const canvas = document.getElementById('crownCanvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = 600;
+canvas.height = 400;
+
+// Crown path points (original path)
+const crownPath = [
+    {x: 100, y: 300}, 
+    {x: 150, y: 200},
+    {x: 200, y: 300},
+    {x: 250, y: 150},
+    {x: 300, y: 300},
+    {x: 350, y: 200},
+    {x: 400, y: 300},
+    {x: 400, y: 350},
+    {x: 100, y: 350}
+];
+
+// Calculate bounding box of crown
+let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+for (const pt of crownPath) {
+    if (pt.x < minX) minX = pt.x;
+    if (pt.x > maxX) maxX = pt.x;
+    if (pt.y < minY) minY = pt.y;
+    if (pt.y > maxY) maxY = pt.y;
+}
+const crownWidth = maxX - minX;
+const crownHeight = maxY - minY;
+
+// Offset to center crown in canvas
+const offsetX = (canvas.width - crownWidth) / 2 - minX;
+const offsetY = (canvas.height - crownHeight) / 2 - minY;
+
+let t = 0; // progress along path
+
+function animateDot() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw crown traced so far
+    ctx.beginPath();
+    ctx.moveTo(crownPath[0].x + offsetX, crownPath[0].y + offsetY);
+
+    const segmentCount = crownPath.length;
+    const segmentIndex = Math.floor(t);
+    const nextIndex = (segmentIndex + 1) % segmentCount;
+    const progress = t - segmentIndex;
+
+    for (let i = 1; i <= segmentIndex; i++) {
+        ctx.lineTo(crownPath[i].x + offsetX, crownPath[i].y + offsetY);
+    }
+
+    // Add partial segment for current dot
+    const current = crownPath[segmentIndex];
+    const next = crownPath[nextIndex];
+    const x = current.x + (next.x - current.x) * progress + offsetX;
+    const y = current.y + (next.y - current.y) * progress + offsetY;
+    ctx.lineTo(x, y);
+
+    ctx.strokeStyle = "#FFD700";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    // Draw the dot on top
+    ctx.beginPath();
+    ctx.arc(x, y, 8, 0, Math.PI * 2);
+    ctx.fillStyle = "red";
+    ctx.fill();
+
+    t += 0.02;
+    if (t >= segmentCount) t = 0;
+    requestAnimationFrame(animateDot);
+}
+
+animateDot();
+</script>
+</body>
+</html>
+
