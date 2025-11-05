@@ -354,7 +354,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Tuesday Oct 28th, 2025</summary>
 
 ### Title
-1.
+1. Catchup/Work Block
 1.
 1.
 
@@ -363,7 +363,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Wednesday Oct 29th, 2025</summary>
 
 ### Title
-1.
+1. Worked on X assignments
 1.
 1.
 
@@ -372,7 +372,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Thursday Oct 30th, 2025</summary>
 
 ### Title
-1.
+1. Worked on VIDEOFLAC test
 1.
 1.
 
@@ -381,7 +381,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Friday Oct 31st, 2025</summary>
 
 ### Title
-1.
+1. Begining of New Term
 1.
 1.
 
@@ -404,7 +404,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details ><summary>Monday Nov 3rd, 2025</summary>
 
 ### Title
-1.
+1. Made and finished t2a17-prince assignment
 1.
 1.
 
@@ -413,7 +413,7 @@ Note: If you have a link to an assignment that has not been marked, put "open" a
 <details><summary>Tuesday Nov 4th, 2025</summary>
 
 ### Title
-1.
+1. Made 5 different types of loops in t2a18-1page-loops
 1.
 1.
 
