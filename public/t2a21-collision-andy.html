@@ -14,8 +14,9 @@ function myHitOther(my1,my2){
        (bottom1 >=  top2   ) &&
        (left1   <=  right2 ) &&
        (top1    <=  bottom2) ){
-       return true
+       return true;
    }
+   return flase;
 }
 
 
@@ -25,7 +26,13 @@ function myCheckHit(){
        document.getElementById('myImg01').style.left = '20px'
        location = 'index.html';  // go to your next level
    }
+}
 </script>
 <br><br><h1 align=center>t2a21-collision-andy.html</h1>
 <img id="myImg01" src="rock.png" style='position:absolute; left:0px; top:0px; width:50px; height:30px;">
 <img id="myImg02" src="paper.png" style='position:absolute; left:0px; top:0px; width:50px; height:30px;">
+input type=button value="Move" onclick="
+document.getElementById('myImg01').style.left =
+parseInt(document.getElementById('myImg01'.style.left) + 10 + 'px';
+myCheckHit()
+}"><br>
