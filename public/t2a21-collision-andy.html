@@ -1,12 +1,4 @@
-<div id="my1"
-     style="position:absolute; left:100px; top:100px; width:100px; height:40px;">
-<img src="rock.html">
-</div>
 
-<div id="my2"
-     style="position:absolute; left:200px; top:120px; width:100px; height:40px;">
-<img src="paper.html">
-</div>
 <script>
 // global functions here
 function myHitOther(my1,my2){
@@ -31,6 +23,9 @@ function myCheckHit(){
    if ( myHitOther('myImg01','myImg02') ){
        alert('you lose')  
        document.getElementById('myImg01').style.left = '20px'
-       location = 'index.html'  // go to your next level
+       location = 'index.html';  // go to your next level
    }
 </script>
+<br><br><h1 align=center>t2a21-collision-andy.html</h1>
+<img id="myImg01" src="rock.png" style='position:absolute; left:0px; top:0px; width:50px; height:30px;">
+<img id="myImg02" src="rock.png" style='position:absolute; left:0px; top:0px; width:50px; height:30px;">
