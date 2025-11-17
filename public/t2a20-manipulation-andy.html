@@ -7,29 +7,29 @@ String, Array, Object manipulation methods<br><br>
 <span id="mySpan01">...</span><br><br>
 
 <input type="button" value=".toUpperCase()" onclick="{
-    let myIn = document.getElementById('myNum01').value;
-    document.getElementById('mySpan01').innerHTML = myIn.toUpperCase();
+    let myIn = document.getElementById('myNum01').value
+    document.getElementById('mySpan01').innerHTML = myIn.toUpperCase()
 }"><br><br>
 
 <input type="button" value=".toLowerCase()" onclick="{
-    let myIn = document.getElementById('myNum01').value;
-    document.getElementById('mySpan01').innerHTML = myIn.toLowerCase();
+    let myIn = document.getElementById('myNum01').value
+    document.getElementById('mySpan01').innerHTML = myIn.toLowerCase()
 }"><br><br>
 
 <input type="button" value=".split() makes an array" onclick="{
-    let myIn = document.getElementById('myNum01').value;
-    document.getElementById('mySpan01').innerHTML = myIn.split('');
+    let myIn = document.getElementById('myNum01').value
+    document.getElementById('mySpan01').innerHTML = myIn.split('')
 }"><br><br>
 
 <input type="button" value=".replace()" onclick="{
     let myIn = document.getElementById('myNum01').value;
-    let result = myIn.replace('string', 'banana');
-    document.getElementById('mySpan01').innerHTML = result;
+    let result = myIn.replace('string', 'banana')
+    document.getElementById('mySpan01').innerHTML = result
 }"><br><br>
 
 <input type="button" value="Array .join()" onclick="{
-    let myArray = ['C','a','k','e'];
-    document.getElementById('mySpan01').innerHTML = myArray.join('-');
+    let myArray = ['C','a','k','e']
+    document.getElementById('mySpan01').innerHTML = myArray.join('-')
 }"><br><br>
 
 
@@ -40,7 +40,7 @@ String, Array, Object manipulation methods<br><br>
         third: true
     };
     let keyArray = Object.keys(myObject);
-    document.getElementById('mySpan01').innerHTML = keyArray;
+    document.getElementById('mySpan01').innerHTML = keyArray
 }"><br><br>
 
 <input type="button" value="Object.values() returns array" onclick="{
@@ -50,5 +50,5 @@ String, Array, Object manipulation methods<br><br>
         third: true
     };
     let valueArray = Object.values(myObject);
-    document.getElementById('mySpan01').innerHTML = valueArray;
+    document.getElementById('mySpan01').innerHTML = valueArray
 }"><br><br>
