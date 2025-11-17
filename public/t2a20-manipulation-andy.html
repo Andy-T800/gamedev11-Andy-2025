@@ -6,38 +6,33 @@ String, Array, Object manipulation methods<br><br>
 
 <span id="mySpan01">...</span><br><br>
 
-<!-- Convert string to UPPERCASE -->
 <input type="button" value=".toUpperCase()" onclick="{
     let myIn = document.getElementById('myNum01').value;
     document.getElementById('mySpan01').innerHTML = myIn.toUpperCase();
 }"><br><br>
 
-<!-- Convert string to lowercase -->
 <input type="button" value=".toLowerCase()" onclick="{
     let myIn = document.getElementById('myNum01').value;
     document.getElementById('mySpan01').innerHTML = myIn.toLowerCase();
 }"><br><br>
 
-<!-- Split string into array -->
 <input type="button" value=".split() makes an array" onclick="{
     let myIn = document.getElementById('myNum01').value;
     document.getElementById('mySpan01').innerHTML = myIn.split('');
 }"><br><br>
 
-<!-- Replace text inside a string -->
 <input type="button" value=".replace()" onclick="{
     let myIn = document.getElementById('myNum01').value;
     let result = myIn.replace('string', 'banana');
     document.getElementById('mySpan01').innerHTML = result;
 }"><br><br>
 
-<!-- Join array back into string -->
 <input type="button" value="Array .join()" onclick="{
-    let myArray = ['A','n','d','y'];
+    let myArray = ['C','a','k','e'];
     document.getElementById('mySpan01').innerHTML = myArray.join('-');
 }"><br><br>
 
-<!-- Object.keys returns array of keys -->
+
 <input type="button" value="Object.keys() returns array" onclick="{
     let myObject = {
         first: 10,
@@ -48,7 +43,6 @@ String, Array, Object manipulation methods<br><br>
     document.getElementById('mySpan01').innerHTML = keyArray;
 }"><br><br>
 
-<!-- Object.values returns array of values -->
 <input type="button" value="Object.values() returns array" onclick="{
     let myObject = {
         first: 10,
