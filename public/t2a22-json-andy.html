@@ -1,19 +1,61 @@
 <h1>t2a22-json-andy.html</h1>
+
 <script>
-  async function fetchData(url){
+  async function fetchData(url) {
     const response = await fetch(url);
     const data = await response.json();
     console.log(data);
 
-    
-    document.getElementById('myDiv1').innerHTML =
-      `<img src="${data.image}" style="max-width:100%; height:auto;">`;
+    const div = document.getElementById('myDiv1');
+
+    // Weather API
+    if (data.current_weather) {
+      const w = data.current_weather;
+      div.innerHTML = `
+        <h3>Weather</h3>  
+        <p><b>Location:</b> Latitude ${data.latitude}, Longitude ${data.longitude}</p>
+        <p><b>Temperature:</b> ${w.temperature}°C</p>
+        <p><b>Wind Speed:</b> ${w.windspeed} km/h</p>
+        <p><b>Weather Code:</b> ${w.weathercode}</p>
+      `;
+    } 
+    // Random Fox API
+    else if (data.image) {
+      div.innerHTML = `<img src="${data.image}" style="max-width:100%; height:auto;">`;
+    } 
+    // CoinPaprika API (Crypto) - show top 5 coins with USD price
+    else if (Array.isArray(data)) {
+      // Filter top 5 by rank
+      const top5 = data
+        .filter(coin => coin.rank > 0)
+        .sort((a, b) => a.rank - b.rank)
+        .slice(0, 5);
+
+      // Fetch detailed price info for each coin
+      const promises = top5.map(coin =>
+        fetch(`https://api.coinpaprika.com/v1/tickers/${coin.id}`)
+          .then(res => res.json())
+      );
+
+      const detailedCoins = await Promise.all(promises);
+
+      div.innerHTML = '<h3>Top 5 Cryptocurrencies</h3>' +
+        detailedCoins.map(coin => `
+          <p><b>${coin.name} (${coin.symbol}):</b> $${coin.quotes.USD.price.toFixed(2)}</p>
+        `).join('');
+    } 
+    else {
+      div.innerHTML = '<p>No data available.</p>';
+    }
   }
 </script>
 
-<select id="mySelect" size="1" onchange="fetchData(this.value)">
-  <option></option>
-  <option value="https://randomfox.ca/floof/">randomfox</option>
-</select><br><br>
+<select id="mySelect" onchange="fetchData(this.value)">
+  <option value="https://api.open-meteo.com/v1/forecast?latitude=40.7&longitude=-73.9&current_weather=true">Weather API</option>
+  <option value="https://randomfox.ca/floof/">Random Fox</option>
+  <option value="https://api.coinpaprika.com/v1/coins">Crypto API</option>
+</select>
+
+<br><br>
 
 <div id="myDiv1"></div>
