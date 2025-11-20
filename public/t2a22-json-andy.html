@@ -2,50 +2,56 @@
 
 <script>
   async function fetchData(url) {
-    const response = await fetch(url);
-    const data = await response.json();
-    console.log(data);
+    try {
+      const response = await fetch(url)
+      const data = await response.json()
+      console.log(data)
 
-    const div = document.getElementById('myDiv1');
+      const div = document.getElementById('myDiv1')
 
-    // Weather API
-    if (data.current_weather) {
-      const w = data.current_weather;
-      div.innerHTML = `
-        <h3>Weather</h3>  
-        <p><b>Location:</b> Latitude ${data.latitude}, Longitude ${data.longitude}</p>
-        <p><b>Temperature:</b> ${w.temperature}°C</p>
-        <p><b>Wind Speed:</b> ${w.windspeed} km/h</p>
-        <p><b>Weather Code:</b> ${w.weathercode}</p>
-      `;
-    } 
-    // Random Fox API
-    else if (data.image) {
-      div.innerHTML = `<img src="${data.image}" style="max-width:100%; height:auto;">`;
-    } 
-    // CoinPaprika API (Crypto) - show top 5 coins with USD price
-    else if (Array.isArray(data)) {
-      // Filter top 5 by rank
-      const top5 = data
-        .filter(coin => coin.rank > 0)
-        .sort((a, b) => a.rank - b.rank)
-        .slice(0, 5);
+      if (data.current_weather) {
+        const w = data.current_weather
+        div.innerHTML = `
+          <h3>Weather</h3>
+          <p><b>Location:</b> Latitude ${data.latitude}, Longitude ${data.longitude}</p>
+          <p><b>Temperature:</b> ${w.temperature}°C</p>
+          <p><b>Wind Speed:</b> ${w.windspeed} km/h</p>
+          <p><b>Weather Code:</b> ${w.weathercode}</p>
+        `
+      } else if (data.image) {
+        div.innerHTML = `<img src="${data.image}" style="max-width:100%; height:auto;">`
+      } else if (Array.isArray(data)) {
+        const top5 = data
+          .filter(coin => coin.rank > 0)
+          .sort((a, b) => a.rank - b.rank)
+          .slice(0, 5)
 
-      // Fetch detailed price info for each coin
-      const promises = top5.map(coin =>
-        fetch(`https://api.coinpaprika.com/v1/tickers/${coin.id}`)
-          .then(res => res.json())
-      );
+        const promises = top5.map(coin =>
+          fetch(`https://api.coinpaprika.com/v1/tickers/${coin.id}`)
+            .then(res => res.json())
+        )
 
-      const detailedCoins = await Promise.all(promises);
+        const detailedCoins = await Promise.all(promises)
 
-      div.innerHTML = '<h3>Top 5 Cryptocurrencies</h3>' +
-        detailedCoins.map(coin => `
-          <p><b>${coin.name} (${coin.symbol}):</b> $${coin.quotes.USD.price.toFixed(2)}</p>
-        `).join('');
-    } 
-    else {
-      div.innerHTML = '<p>No data available.</p>';
+        div.innerHTML = '<h3>Top 5 Cryptocurrencies</h3>' +
+          detailedCoins.map(coin => `
+            <p><b>${coin.name} (${coin.symbol}):</b> $${coin.quotes.USD.price.toFixed(2)}</p>
+          `).join('')
+      } else if (data.setup && data.punchline) {
+        div.innerHTML = `<h3>Random Joke</h3><p>${data.setup}</p><p>${data.punchline}</p>`
+      } else if (data.url) {
+        div.innerHTML = `<h3>Random Dog Image</h3><img src="${data.url}" style="max-width:100%; height:auto;">`
+      } else if (data.fact) {
+        div.innerHTML = `<h3>Random Cat Fact</h3><p>${data.fact}</p>`
+      } else if (data.content && data.author) {
+        div.innerHTML = `<h3>Random Quote</h3><p>"${data.content}"</p><p><b>- ${data.author}</b></p>`
+      } else if (data.name && data.age !== undefined) {
+        div.innerHTML = `<h3>Age Prediction</h3><p>Name: ${data.name}</p><p>Predicted Age: ${data.age}</p>`
+      } else {
+        div.innerHTML = '<p>No data available.</p>'
+      }
+    } catch (error) {
+      document.getElementById('myDiv1').innerHTML = `<p>Error: ${error}</p>`
     }
   }
 </script>
@@ -54,8 +60,14 @@
   <option value="https://api.open-meteo.com/v1/forecast?latitude=40.7&longitude=-73.9&current_weather=true">Weather API</option>
   <option value="https://randomfox.ca/floof/">Random Fox</option>
   <option value="https://api.coinpaprika.com/v1/coins">Crypto API</option>
+  <option value="https://official-joke-api.appspot.com/random_joke">Random Joke API</option>
+  <option value="https://random.dog/woof.json">Random Dog API</option>
+  <option value="https://catfact.ninja/fact">Random Cat Fact API</option>
+  <option value="https://api.quotable.io/random">Quotable Random Quote API</option>
+  <option value="https://api.agify.io?name=michael">Age Prediction API</option>
 </select>
 
 <br><br>
 
 <div id="myDiv1"></div>
+
