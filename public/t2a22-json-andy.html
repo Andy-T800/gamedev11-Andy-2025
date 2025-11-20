@@ -20,7 +20,7 @@
         `
       } else if (data.image) {
         div.innerHTML = `<img src="${data.image}" style="max-width:100%; height:auto;">`
-      } else if (Array.isArray(data)) {
+      } else if (Array.isArray(data) && data.length > 0 && data[0].rank !== undefined) {
         const top5 = data
           .filter(coin => coin.rank > 0)
           .sort((a, b) => a.rank - b.rank)
@@ -43,8 +43,6 @@
         div.innerHTML = `<h3>Random Dog Image</h3><img src="${data.url}" style="max-width:100%; height:auto;">`
       } else if (data.fact) {
         div.innerHTML = `<h3>Random Cat Fact</h3><p>${data.fact}</p>`
-      } else if (data.content && data.author) {
-        div.innerHTML = `<h3>Random Quote</h3><p>"${data.content}"</p><p><b>- ${data.author}</b></p>`
       } else if (data.name && data.age !== undefined) {
         div.innerHTML = `<h3>Age Prediction</h3><p>Name: ${data.name}</p><p>Predicted Age: ${data.age}</p>`
       } else {
@@ -63,11 +61,9 @@
   <option value="https://official-joke-api.appspot.com/random_joke">Random Joke API</option>
   <option value="https://random.dog/woof.json">Random Dog API</option>
   <option value="https://catfact.ninja/fact">Random Cat Fact API</option>
-  <option value="https://cors.isomorphic-git.org/https://api.quotable.io/random">Quotable Random Quote API</option>
   <option value="https://api.agify.io?name=michael">Age Prediction API</option>
 </select>
 
 <br><br>
 
 <div id="myDiv1"></div>
-
