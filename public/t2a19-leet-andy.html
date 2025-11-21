@@ -39,23 +39,20 @@ document.getElementById("rev").innerHTML = reversed;
 
 <br><br><li> Full working HTML example  
 
-<p>Reversed string: <span id="rev"></span></p>
+<!-- Div where reversed string will appear -->
+<div id="rev2"></div>
 
 <script>
-    // Function to reverse any string
+    // Function to reverse a string
     function reverseString(str) {
         return str.split("").reverse().join("");
     }
 
     // Example string
-    let str = "string";
+    const str = "string";
 
-    // Call the function and display result
-    let reversed = reverseString(str);
-    document.getElementById("rev").innerHTML = reversed;
-
-    // You can try with other strings too
-    // console.log(reverseString("hello world"));
+    // Reverse the string and display it
+    document.getElementById("rev2").innerHTML = reverseString(str);
 </script>
 
 </body>
