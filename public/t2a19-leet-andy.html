@@ -1,7 +1,18 @@
-<br><br><li> Show your prompt here
-make a beginner leetcode problem
-<br><br><li> Show the Leet question here
-  Write a function that takes a string as input and returns the reversed string.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reverse String</title>
+</head>
+<body>
+
+<br><br><li> Show your prompt here  
+make a beginner leetcode problem  
+
+<br><br><li> Show the Leet question here  
+Write a function that takes a string as input and returns the reversed string.  
+
 <br><br><li> Within PRE tags show your version of the leet answer without looking at the actual answer. <br>
 
 <pre>
@@ -14,7 +25,7 @@ let reverse = reverse()
 document.getElementById(rev).innerHTML = reversed
 </pre>
 
-<br><br><li> Put the chatGPT working code here. (Sensibly, it does not need several tags that are not used)
+<br><br><li> Put the chatGPT working code here.  
 
 <pre>
 This code is in the pre tag
@@ -22,33 +33,29 @@ This code is in the pre tag
                 For example this is shifted in
 <div id="rev">...</div>
 let str = "string"
-let reverse = reverse()
-document.getElementById("rev").innerHTML = reversed
+let reversed = str.split("").reverse().join("");
+document.getElementById("rev").innerHTML = reversed;
 </pre>
 
-<br><br><li> Put the chatGPT working code here. (Sensibly, it does not need several tags that are not used)
+<br><br><li> Full working HTML example  
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reverse String</title>
-</head>
-<body>
-
-<!-- Display reversed string -->
-<p id="rev"></p>
+<p>Reversed string: <span id="rev"></span></p>
 
 <script>
-    // Hardcoded string
+    // Function to reverse any string
+    function reverseString(str) {
+        return str.split("").reverse().join("");
+    }
+
+    // Example string
     let str = "string";
 
-    // Reverse the string
-    let reversed = str.split("").reverse().join("");
-
-    // Display it
+    // Call the function and display result
+    let reversed = reverseString(str);
     document.getElementById("rev").innerHTML = reversed;
+
+    // You can try with other strings too
+    // console.log(reverseString("hello world"));
 </script>
 
 </body>
