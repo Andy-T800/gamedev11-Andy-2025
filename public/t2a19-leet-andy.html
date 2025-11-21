@@ -1,26 +1,31 @@
-Here’s the text from the image, cleaned up but still faithful to the original formatting:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>t2a19-leet-andy.html</title>
+</head>
+<body>
 
-<h1 align=center>t2a19-leet-andy.html</h1>
+<h1 align="center">t2a19-leet-andy.html</h1>
 
-<br><br><li> Ask chatGPT for a beginner friendly javascript Leet code question.
-
-<br><br><li> Record the question on this webpage
-
-<br><br><li> Write your code to solve the problem within Pre tags
-
-<br><br><li> Ask chatGPT to make an html javascript single file answer without any css.
+<li> Ask chatGPT for a beginner friendly javascript Leet code question.
+<br><br>
+<li> Record the question on this webpage
+<br><br>
+<li> Write your code to solve the problem within Pre tags
+<br><br>
+<li> Ask chatGPT to make an html javascript single file answer without any css.
 
 <ol>
-<br><br><li> Show your prompt here
+<br><br><li> Show your prompt here  
 make a beginner leetcode problem
-<br><br><li> Show the Leet question here
-Difficulty: Easy
 
-Description
-
-Write a function that reverses a string.
+<br><br><li> Show the Leet question here  
+Difficulty: Easy  
+<br>Description: Write a function that reverses a string.  
 The input string is given as an array of characters s.
-    
+
 <br><br><li> Within PRE tags show your version of the leet answer without looking at the actual answer. <br>
 
 <pre>
@@ -30,30 +35,34 @@ let reverse = reverse()
 document.getElementById(rev).innerHTML = reversed
 </pre>
 
-<br><br><li> Put the chatGPT working code here. (Sensibly, it does not need several tags that are not used)
+<br><br><li> Put the chatGPT working code here, revealed by pressing a button.
+
+<button onclick="showWorking()">Show Working Version</button>
+
+<div id="working"></div>
+
+<script>
+function showWorking() {
+    document.getElementById("working").innerHTML = `
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reverse String</title>
-</head>
+<html>
 <body>
 
-<!-- Display reversed string -->
 <p id="rev"></p>
 
 <script>
-// Hardcoded string
 let str = "string";
-
-// Reverse the string
 let reversed = str.split("").reverse().join("");
-
-// Display it
 document.getElementById("rev").innerHTML = reversed;
-</script>
+<\/script>
 
 </body>
 </html>
+    `;
+}
+</script>
+
 </ol>
+
+</body>
+</html>
