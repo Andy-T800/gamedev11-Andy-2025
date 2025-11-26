@@ -14,7 +14,9 @@
       const saveBtn = document.getElementById("saveBtn");
 
       // Load saved name from backend
-      fetch(API_URL + "/api/name")
+      fetch(API_URL + "/api/name", {
+        credentials: "include"
+      })
         .then(res => res.json())
         .then(data => {
           if (data.name) {
@@ -28,6 +30,7 @@
       saveBtn.onclick = () => {
         fetch(API_URL + "/api/name", {
           method: "POST",
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: nameInput.value })
         }).then(() => {
