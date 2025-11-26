@@ -1,4 +1,37 @@
-<h1>backend thing</h1>
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1 id="greeting">Loading...</h1>
 
-<h2>input name here</h2>
-<input type=textbox id=myTextbox01></input>
+    <input id="nameInput" type="text" placeholder="Enter your name">
+    <button id="saveBtn">Save</button>
+
+    <script>
+      const greeting = document.getElementById("greeting");
+      const nameInput = document.getElementById("nameInput");
+      const saveBtn = document.getElementById("saveBtn");
+
+      // Load saved name from backend
+      fetch("/api/name")
+        .then(res => res.json())
+        .then(data => {
+          if (data.name) {
+            greeting.textContent = "Hi, " + data.name + "!";
+          } else {
+            greeting.textContent = "Enter your name:";
+          }
+        });
+
+      // Save new name to backend
+      saveBtn.onclick = () => {
+        fetch("/api/name", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: nameInput.value })
+        }).then(() => {
+          greeting.textContent = "Hi, " + nameInput.value + "!";
+        });
+      };
+    </script>
+  </body>
+</html>
