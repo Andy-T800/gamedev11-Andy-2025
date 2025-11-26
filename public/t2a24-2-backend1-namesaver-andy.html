@@ -24,7 +24,7 @@
 
       // Save new name to backend
       saveBtn.onclick = () => {
-        fetch("/api/name", {
+        fetch("YOUR_REPLIT_URL/api/name", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: nameInput.value })
