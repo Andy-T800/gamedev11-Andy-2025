@@ -1,10 +1,10 @@
 # My Index
 https://andy-t800.github.io/gamedev11-Andy-2025/public/index.html
 # Mr Ellis links
-https://hpssjellis.github.io/my-examples-of-liteRTjs/public/index.html
-https://github.com/hpssjellis/my-examples-of-liteRTjs/tree/main/public
-https://hpssjellis.github.io/my-examples-of-liteRTjs/public/drag-class00.html
-https://github.com/hpssjellis/high-school-javascript-game-dev-assignment-images/blob/main/public/collisions.js
+https://hpssjellis.github.io/my-examples-of-liteRTjs/public/index.html<br>
+https://github.com/hpssjellis/my-examples-of-liteRTjs/tree/main/public<br>
+https://hpssjellis.github.io/my-examples-of-liteRTjs/public/drag-class00.html<br>
+IMPORTANT: https://github.com/hpssjellis/high-school-javascript-game-dev-assignment-images/blob/main/public/collisions.js<br>
 # School Course GameDev 11-12, Learning Journal for Andy, Semester 1 2025
 
 
