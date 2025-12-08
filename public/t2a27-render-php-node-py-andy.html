@@ -8,7 +8,7 @@ body {
 
 /* The link */
 a {     
-  font-size: 40px;
+  font-size: 45px;
   background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
   -webkit-background-clip: text;
   color: transparent;
@@ -16,14 +16,12 @@ a {
   text-decoration: none;
 }
 
-/* --- ARROW STYLES --- */
-
-/* Base arrow block */
+/* --- BIG ARROWS --- */
 .arrow {
-  width: 40px;
-  height: 40px;
-  margin: 10px auto;
+  width: 80px;
+  height: 80px;
   position: relative;
+  margin: 20px;
 }
 
 /* Right arrow */
@@ -32,9 +30,9 @@ a {
   position: absolute;
   width: 0;
   height: 0;
-  border-top: 20px solid transparent;
-  border-bottom: 20px solid transparent;
-  border-left: 30px solid red;
+  border-top: 40px solid transparent;
+  border-bottom: 40px solid transparent;
+  border-left: 70px solid red;
 }
 
 /* Left arrow */
@@ -43,9 +41,9 @@ a {
   position: absolute;
   width: 0;
   height: 0;
-  border-top: 20px solid transparent;
-  border-bottom: 20px solid transparent;
-  border-right: 30px solid red;
+  border-top: 40px solid transparent;
+  border-bottom: 40px solid transparent;
+  border-right: 70px solid red;
 }
 
 /* Up arrow */
@@ -54,9 +52,9 @@ a {
   position: absolute;
   width: 0;
   height: 0;
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  border-bottom: 30px solid red;
+  border-left: 40px solid transparent;
+  border-right: 40px solid transparent;
+  border-bottom: 70px solid red;
 }
 
 /* Down arrow */
@@ -65,12 +63,13 @@ a {
   position: absolute;
   width: 0;
   height: 0;
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  border-top: 30px solid red;
+  border-left: 40px solid transparent;
+  border-right: 40px solid transparent;
+  border-top: 70px solid red;
 }
 
-.around {
+/* Layout helpers */
+.row {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -79,15 +78,15 @@ a {
 
 <h1>t2a27-render-php-node-py-andy.html</h1>
 
-<!-- Top arrows -->
-<div class="around">
+<!-- Top row arrows -->
+<div class="row">
   <div class="arrow arrow-up"></div>
   <div class="arrow arrow-up"></div>
   <div class="arrow arrow-up"></div>
 </div>
 
-<!-- Middle row with left/right arrows -->
-<div class="around">
+<!-- Middle row with left and right arrows -->
+<div class="row">
   <div class="arrow arrow-left"></div>
 
   <a href="https://render-server-ilbk.onrender.com/">MY RENDER PHP WEBSITE LINK</a>
@@ -95,8 +94,8 @@ a {
   <div class="arrow arrow-right"></div>
 </div>
 
-<!-- Bottom arrows -->
-<div class="around">
+<!-- Bottom row arrows -->
+<div class="row">
   <div class="arrow arrow-down"></div>
   <div class="arrow arrow-down"></div>
   <div class="arrow arrow-down"></div>
