@@ -1,3 +1,4 @@
+
 <style>
 body {
   background-color: skyblue;
@@ -14,8 +15,36 @@ a {
   font-weight: bold;
   text-decoration: none;
 }
+
+/* Arrow styling */
+.arrow {
+  display: inline-block;
+  font-size: 50px;
+  color: red;
+  font-weight: bold;
+  margin: 10px;
+  animation: bounce 1s infinite alternate;
+}
+
+/* Arrow animation */
+@keyframes bounce {
+  from { transform: translateY(0px); }
+  to   { transform: translateY(-10px); }
+}
 </style>
 
 <h1>t2a27-render-php-node-py-andy.html</h1>
 
-<a href="https://render-server-ilbk.onrender.com/">MY RENDER PHP WEBSITE LINK</a>
+<div>
+  <span class="arrow">⬅️⬅️⬅️</span>
+  <a href="https://render-server-ilbk.onrender.com/">MY RENDER PHP WEBSITE LINK</a>
+  <span class="arrow">➡️➡️➡️</span>
+</div>
+
+<div>
+  <span class="arrow">⬆️⬆️⬆️</span>
+</div>
+
+<div>
+  <span class="arrow">⬇️⬇️⬇️</span>
+</div>
