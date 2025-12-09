@@ -129,39 +129,44 @@ if (myString[myLoop] == 'z') { myTemp = 26; }
 <textarea id="myArea05" rows=4 cols=70></textarea><br> 
 
 <input type=button value="decrypt" onclick="{
-   let myTemp = ''
-   myString = document.getElementById('myArea05').value.toLowerCase().split('')
-   for (let myLoop=0;   myLoop < myString.length; myLoop++){
-      myTemp = myString[myLoop]
-if (myTemp == 1)  { myLetter = 'a'; }
-if (myTemp == 2)  { myLetter = 'b'; }
-if (myTemp == 3)  { myLetter = 'c'; }
-if (myTemp == 4)  { myLetter = 'd'; }
-if (myTemp == 5)  { myLetter = 'e'; }
-if (myTemp == 6)  { myLetter = 'f'; }
-if (myTemp == 7)  { myLetter = 'g'; }
-if (myTemp == 8)  { myLetter = 'h'; }
-if (myTemp == 9)  { myLetter = 'i'; }
-if (myTemp == 10) { myLetter = 'j'; }
-if (myTemp == 11) { myLetter = 'k'; }
-if (myTemp == 12) { myLetter = 'l'; }
-if (myTemp == 13) { myLetter = 'm'; }
-if (myTemp == 14) { myLetter = 'n'; }
-if (myTemp == 15) { myLetter = 'o'; }
-if (myTemp == 16) { myLetter = 'p'; }
-if (myTemp == 17) { myLetter = 'q'; }
-if (myTemp == 18) { myLetter = 'r'; }
-if (myTemp == 19) { myLetter = 's'; }
-if (myTemp == 20) { myLetter = 't'; }
-if (myTemp == 21) { myLetter = 'u'; }
-if (myTemp == 22) { myLetter = 'v'; }
-if (myTemp == 23) { myLetter = 'w'; }
-if (myTemp == 24) { myLetter = 'x'; }
-if (myTemp == 25) { myLetter = 'y'; }
-if (myTemp == 26) { myLetter = 'z'; }
-      myString[myLoop] = myTemp
-   }
-   document.getElementById('myArea06').value = myString.join('')
+let myTemp = ''
+myString = document.getElementById('myArea05').value.split(' ')
+let result = []
+
+for (let myLoop=0; myLoop < myString.length; myLoop++) {
+    myTemp = Number(myString[myLoop])  // convert STRING → NUMBER
+    let myLetter = myString[myLoop]
+
+if (myTemp == 1) { myLetter = 'a' }
+if (myTemp == 2) { myLetter = 'b' }
+if (myTemp == 3) { myLetter = 'c' }
+if (myTemp == 4) { myLetter = 'd' }
+if (myTemp == 5) { myLetter = 'e' }
+if (myTemp == 6) { myLetter = 'f' }
+if (myTemp == 7) { myLetter = 'g' }
+if (myTemp == 8) { myLetter = 'h' }
+if (myTemp == 9) { myLetter = 'i' }
+if (myTemp == 10) { myLetter = 'j' }
+if (myTemp == 11) { myLetter = 'k' }
+if (myTemp == 12) { myLetter = 'l' }
+if (myTemp == 13) { myLetter = 'm' }
+if (myTemp == 14) { myLetter = 'n' }
+if (myTemp == 15) { myLetter = 'o' }
+if (myTemp == 16) { myLetter = 'p' }
+if (myTemp == 17) { myLetter = 'q' }
+if (myTemp == 18) { myLetter = 'r' }
+if (myTemp == 19) { myLetter = 's' }
+if (myTemp == 20) { myLetter = 't' }
+if (myTemp == 21) { myLetter = 'u' }
+if (myTemp == 22) { myLetter = 'v' }
+if (myTemp == 23) { myLetter = 'w' }
+if (myTemp == 24) { myLetter = 'x' }
+if (myTemp == 25) { myLetter = 'y' }
+if (myTemp == 26) { myLetter = 'z' }
+
+    result.push(myLetter)
+}
+document.getElementById('myArea06').value = result.join('')
 
 }"><br><br>
 
