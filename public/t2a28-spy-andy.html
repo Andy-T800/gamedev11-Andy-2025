@@ -112,13 +112,13 @@ function encrypt() {
             // Convert 'a'-'z' to 1-26
             result.push(code - 96);
         } else if (input[i] === " ") {
-            // Keep spaces visible
+            // Keep spaces visible, using the '/' separator
             result.push("/"); 
         }
     }
     document.getElementById('myArea06').value = result.join(" ");
 }
-   
+    
 function decrypt() {
     let input = document.getElementById('myArea06').value.trim();
     // Split by one or more spaces
@@ -126,13 +126,22 @@ function decrypt() {
     let result = "";
 
     for (let i = 0; i < parts.length; i++) {
-        let n = parseInt(parts[i]);
+        let part = parts[i]; // Use part variable for easier comparison
+        let n = parseInt(part);
+        
+        // 1. Check for the number-to-letter conversion
         if (n >= 1 && n <= 26) {
             // 96 is the offset for lowercase 'a' in ASCII
             result += String.fromCharCode(n + 96);
-        } else {
-            // If it's not a number 1-26, keep it as is (like punctuation)
-            result += parts[i];
+        } 
+        // 2. Check for the '/' separator and convert it to a space
+        else if (part === '/') {
+            result += ' ';
+        }
+        // 3. (Optional) Handle other characters/errors
+        else {
+            // You can choose to ignore or keep unknown symbols/text in the cipher
+            // result += part; 
         }
     }
     document.getElementById('myArea07').value = result;
