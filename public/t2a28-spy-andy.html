@@ -90,90 +90,54 @@ if (myString[myLoop] == 'a') { myTemp = 'z'; }
 
 <h2>Number Cipher</h2>
 
-<textarea id="myArea04" rows=4 cols=70>Hello how are you</textarea><br> 
-
-
-<input type=button value="encrypt" onclick="{
-   let myTemp = ''
-   myString = document.getElementById('myArea04').value.toLowerCase().split('')
-   for (let myLoop=0;   myLoop < myString.length; myLoop++){
-      myTemp = myString[myLoop]
-if (myTemp == 'a') { myTemp = 1 }
-if (myTemp == 'b') { myTemp = 2 }
-if (myTemp == 'c') { myTemp = 3 }
-if (myTemp == 'd') { myTemp = 4 }
-if (myTemp == 'e') { myTemp = 5 }
-if (myTemp == 'f') { myTemp = 6 }
-if (myTemp == 'g') { myTemp = 7 }
-if (myTemp == 'h') { myTemp = 8 }
-if (myTemp == 'i') { myTemp = 9 }
-if (myTemp == 'j') { myTemp = 10 }
-if (myTemp == 'k') { myTemp = 11 }
-if (myTemp == 'l') { myTemp = 12 }
-if (myTemp == 'm') { myTemp = 13 }
-if (myTemp == 'n') { myTemp = 14 }
-if (myTemp == 'o') { myTemp = 15 }
-if (myTemp == 'p') { myTemp = 16 }
-if (myTemp == 'q') { myTemp = 17 }
-if (myTemp == 'r') { myTemp = 18 }
-if (myTemp == 's') { myTemp = 19 }
-if (myTemp == 't') { myTemp = 20 }
-if (myTemp == 'u') { myTemp = 21 }
-if (myTemp == 'v') { myTemp = 22 }
-if (myTemp == 'w') { myTemp = 23 }
-if (myTemp == 'x') { myTemp = 24 }
-if (myTemp == 'y') { myTemp = 25 }
-if (myTemp == 'z') { myTemp = 26 }
-
-      myString[myLoop] = myTemp
-   }
-   document.getElementById('myArea05').value = myString.join(' ')
-}"><br><br>
-
-<textarea id="myArea05" rows=4 cols=70>...</textarea><br> 
-
-
 <input type=button value="decrypt" onclick="{
 let myTemp = ''
-myString = document.getElementById('myArea05').value.split(' ')
+let parts = document.getElementById('myArea05').value.split(' ')
 let result = []
+let word = ''
 
-for (let myLoop=0; myLoop < myString.length; myLoop++) {
-    myTemp = Number(myString[myLoop])
-    let myLetter = myString[myLoop]
+for (let i = 0; i < parts.length; i++) {
 
-if (myTemp == 1) { myLetter = 'a' }
-if (myTemp == 2) { myLetter = 'b' }
-if (myTemp == 3) { myLetter = 'c' }
-if (myTemp == 4) { myLetter = 'd' }
-if (myTemp == 5) { myLetter = 'e' }
-if (myTemp == 6) { myLetter = 'f' }
-if (myTemp == 7) { myLetter = 'g' }
-if (myTemp == 8) { myLetter = 'h' }
-if (myTemp == 9) { myLetter = 'i' }
-if (myTemp == 10) { myLetter = 'j' }
-if (myTemp == 11) { myLetter = 'k' }
-if (myTemp == 12) { myLetter = 'l' }
-if (myTemp == 13) { myLetter = 'm' }
-if (myTemp == 14) { myLetter = 'n' }
-if (myTemp == 15) { myLetter = 'o' }
-if (myTemp == 16) { myLetter = 'p' }
-if (myTemp == 17) { myLetter = 'q' }
-if (myTemp == 18) { myLetter = 'r' }
-if (myTemp == 19) { myLetter = 's' }
-if (myTemp == 20) { myLetter = 't' }
-if (myTemp == 21) { myLetter = 'u' }
-if (myTemp == 22) { myLetter = 'v' }
-if (myTemp == 23) { myLetter = 'w' }
-if (myTemp == 24) { myLetter = 'x' }
-if (myTemp == 25) { myLetter = 'y' }
-if (myTemp == 26) { myLetter = 'z' }
+    if (parts[i] === '') {
+        result.push(word)
+        word = ''
+        continue
+    }
 
-    result.push(myLetter)
+    let n = Number(parts[i])
+    let letter = parts[i]
+
+    if (n == 1) letter = 'a'
+    if (n == 2) letter = 'b'
+    if (n == 3) letter = 'c'
+    if (n == 4) letter = 'd'
+    if (n == 5) letter = 'e'
+    if (n == 6) letter = 'f'
+    if (n == 7) letter = 'g'
+    if (n == 8) letter = 'h'
+    if (n == 9) letter = 'i'
+    if (n == 10) letter = 'j'
+    if (n == 11) letter = 'k'
+    if (n == 12) letter = 'l'
+    if (n == 13) letter = 'm'
+    if (n == 14) letter = 'n'
+    if (n == 15) letter = 'o'
+    if (n == 16) letter = 'p'
+    if (n == 17) letter = 'q'
+    if (n == 18) letter = 'r'
+    if (n == 19) letter = 's'
+    if (n == 20) letter = 't'
+    if (n == 21) letter = 'u'
+    if (n == 22) letter = 'v'
+    if (n == 23) letter = 'w'
+    if (n == 24) letter = 'x'
+    if (n == 25) letter = 'y'
+    if (n == 26) letter = 'z'
+
+    word += letter
 }
+
+if (word != '') result.push(word)
+
 document.getElementById('myArea06').value = result.join(' ')
 }">
-<br><br>
-
-
-<textarea id="myArea06" rows=4 cols=70></textarea><br>
