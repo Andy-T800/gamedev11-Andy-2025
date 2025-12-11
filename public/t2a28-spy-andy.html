@@ -88,57 +88,52 @@ if (myString[myLoop] == 'a') { myTemp = 'z'; }
 
 <textarea id="myArea03" rows=4 cols=70></textarea><br>
 
+
+
 <h2>Number Cipher</h2>
-<textarea id="myArea05" rows=4 cols=70>Hello how are you</textarea><br> 
-<input type=button value="decrypt" onclick="{
-let myTemp = ''
-let parts = document.getElementById('myArea05').value.split(' ')
-let result = []
-let word = ''
 
-for (let i = 0; i < parts.length; i++) {
+<textarea id="myArea05" rows=4 cols=70 placeholder="Type numbers (e.g., 8 5 12 12 15) or text here..."></textarea><br>
 
-    if (parts[i] === '') {
-        result.push(word)
-        word = ''
-        continue
+<input type="button" value="Decrypt Numbers to Text" onclick="decrypt()">
+<input type="button" value="Encrypt Text to Numbers" onclick="encrypt()">
+<br>
+
+<textarea id="myArea06" rows=4 cols=70 placeholder="Result will appear here..."></textarea>
+
+<script>
+function decrypt() {
+    let input = document.getElementById('myArea05').value.trim();
+    // Split by one or more spaces
+    let parts = input.split(/\s+/); 
+    let result = "";
+
+    for (let i = 0; i < parts.length; i++) {
+        let n = parseInt(parts[i]);
+        if (n >= 1 && n <= 26) {
+            // 96 is the offset for lowercase 'a' in ASCII
+            result += String.fromCharCode(n + 96);
+        } else {
+            // If it's not a number 1-26, keep it as is (like punctuation)
+            result += parts[i];
+        }
     }
-
-    let n = Number(parts[i])
-    let letter = parts[i]
-
-    if (n == 1) letter = 'a'
-    if (n == 2) letter = 'b'
-    if (n == 3) letter = 'c'
-    if (n == 4) letter = 'd'
-    if (n == 5) letter = 'e'
-    if (n == 6) letter = 'f'
-    if (n == 7) letter = 'g'
-    if (n == 8) letter = 'h'
-    if (n == 9) letter = 'i'
-    if (n == 10) letter = 'j'
-    if (n == 11) letter = 'k'
-    if (n == 12) letter = 'l'
-    if (n == 13) letter = 'm'
-    if (n == 14) letter = 'n'
-    if (n == 15) letter = 'o'
-    if (n == 16) letter = 'p'
-    if (n == 17) letter = 'q'
-    if (n == 18) letter = 'r'
-    if (n == 19) letter = 's'
-    if (n == 20) letter = 't'
-    if (n == 21) letter = 'u'
-    if (n == 22) letter = 'v'
-    if (n == 23) letter = 'w'
-    if (n == 24) letter = 'x'
-    if (n == 25) letter = 'y'
-    if (n == 26) letter = 'z'
-
-    word += letter
+    document.getElementById('myArea06').value = result;
 }
 
-if (word != '') result.push(word)
+function encrypt() {
+    let input = document.getElementById('myArea05').value.toLowerCase();
+    let result = [];
 
-document.getElementById('myArea06').value = result.join(' ')
-}">
-<textarea id="myArea06" rows=4 cols=70>...</textarea><br> 
+    for (let i = 0; i < input.length; i++) {
+        let code = input.charCodeAt(i);
+        if (code >= 97 && code <= 122) {
+            // Convert 'a'-'z' to 1-26
+            result.push(code - 96);
+        } else if (input[i] === " ") {
+            // Keep spaces visible
+            result.push("/"); 
+        }
+    }
+    document.getElementById('myArea06').value = result.join(" ");
+}
+</script>
