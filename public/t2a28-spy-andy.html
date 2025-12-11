@@ -93,33 +93,15 @@ if (myString[myLoop] == 'a') { myTemp = 'z'; }
 <h2>Number Cipher</h2>
 
 <textarea id="myArea05" rows=4 cols=70 placeholder="Type numbers (e.g., 8 5 12 12 15) or text here..."></textarea><br>
-
-<input type="button" value="Decrypt Numbers to Text" onclick="decrypt()">
+<br>
 <input type="button" value="Encrypt Text to Numbers" onclick="encrypt()">
 <br>
-
+<textarea id="myArea06" rows=4 cols=70 placeholder="Result will appear here..."></textarea>
+<input type="button" value="Decrypt Numbers to Text" onclick="decrypt()">
+<br>
 <textarea id="myArea06" rows=4 cols=70 placeholder="Result will appear here..."></textarea>
 
 <script>
-function decrypt() {
-    let input = document.getElementById('myArea05').value.trim();
-    // Split by one or more spaces
-    let parts = input.split(/\s+/); 
-    let result = "";
-
-    for (let i = 0; i < parts.length; i++) {
-        let n = parseInt(parts[i]);
-        if (n >= 1 && n <= 26) {
-            // 96 is the offset for lowercase 'a' in ASCII
-            result += String.fromCharCode(n + 96);
-        } else {
-            // If it's not a number 1-26, keep it as is (like punctuation)
-            result += parts[i];
-        }
-    }
-    document.getElementById('myArea06').value = result;
-}
-
 function encrypt() {
     let input = document.getElementById('myArea05').value.toLowerCase();
     let result = [];
@@ -136,4 +118,24 @@ function encrypt() {
     }
     document.getElementById('myArea06').value = result.join(" ");
 }
+   
+function decrypt() {
+    let input = document.getElementById('myArea06').value.trim();
+    // Split by one or more spaces
+    let parts = input.split(/\s+/); 
+    let result = "";
+
+    for (let i = 0; i < parts.length; i++) {
+        let n = parseInt(parts[i]);
+        if (n >= 1 && n <= 26) {
+            // 96 is the offset for lowercase 'a' in ASCII
+            result += String.fromCharCode(n + 96);
+        } else {
+            // If it's not a number 1-26, keep it as is (like punctuation)
+            result += parts[i];
+        }
+    }
+    document.getElementById('myArea07').value = result;
+}
+
 </script>
