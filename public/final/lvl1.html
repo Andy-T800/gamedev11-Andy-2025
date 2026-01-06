@@ -2,12 +2,17 @@
 <html>
 <head>
     <style>
-        #Player { transform-origin: center; }
-        #myGround04 { background-color: #836539; }
+        #Player { transform-origin: center; transition: transform 0.1s; }
+        #myGround04 { background-color: #836539;}
         
-        /* The Blue Debug Boxes */
+        .platform {
+            background-color: green;
+            position: absolute;
+            box-sizing: border-box;
+        }
+
         .hitbox-visual {
-            border: 1px solid rgba(0, 0, 255, 0.1); 
+            border: 1px none rgba(0, 0, 255, 0.4); 
             position: absolute;
             pointer-events: none;
             z-index: 1000;
@@ -16,212 +21,265 @@
     </style>
 </head>
 
-<body id="myBody" style="background-repeat:repeat; background-size: 80%" background="myBackground01.jpg">
+<body id="myBody" style="background-repeat:repeat; background-size: 80%" background="sky.png">
 
-    <h1 align="center"><font color="red">T4A04 Maze by Fred</font></h1>
+    <h1 align="center"><font color="red">Level 1</font></h1>
 
-    <img id="Player" src="Scissors.png" style="position:absolute; width:100px; height:80px; left: 50px; top:500px;">
-    <img id="myPlatform02" src="green.png" class="platform" style="position:absolute; width:150px; height:20px; left:350px; top:400px;">
-    <img id="myPlatform03" src="green.png" class="platform" style="position:absolute; width:150px; height:20px; left:550px; top:400px;">
-    <img id="myPlatform03" src="green.png" class="platform" style="position:absolute; width:150px; height:20px; left:550px; top:400px;">
+    <img id="Player" src="Scissors.png" style="position:absolute; width:100px; height:80px; left:0px; top:300px;">
+
+    <div id="myPlatform02" class="platform" style="width:150px; height:10px; left:350px; top:400px;"></div>
+    <div id="myPlatform03" class="platform" style="width:150px; height:10px; left:550px; top:400px;"></div>
+    <div id="myPlatform04" class="platform" style="width:150px; height:10px; left:0px; top:400px;"></div>
+    <div id="myPlatform05" class="platform" style="width:150px; height:10px; left:1000px; top:400px;"></div>
+    <div id="myPlatform06" class="platform" style="width:100px; height:10px; left:200px; top:400px;"></div>
+    <div id="myPlatform07" class="platform" style="width:100px; height:10px; left:275px; top:300px;"></div>
+    <div id="myPlatform08" class="platform" style="width:175px; height:10px; left:825px; top:400px;"></div>
+    
     <img id="myDeathBox03" src="red.png" style="position:absolute; width:50px; height:10px; left:500px; top:400px;">
-    <img id="myWin01" src="yellow.png" style="position:absolute; width:100px; height:80px; left:800px; top:425px;">
+    <img id="myDeathBox04" src="red.png" style="position:absolute; width:100px; height:10px; left:825px; top:300px;">
+    <img id="myWin01" src="yellow.png" style="position:absolute; width:50px; height:80px; left:1050px; top:320px;">
+    <img id="myRock01" src="rock.png" style="position:absolute; width:40px; height:40px; left:225px; top:360px;">
     <img id="Paper02" src="paper.png" style="position:absolute; width:50px; height:70px; left: 600px; top:320px;">
+    <img id="Scissors03" src="Scissors.png" style="position:absolute; width:100px; height:80px; left: 825px; top:320px;">
+    
     <div id="myGround04" style="position:absolute; width:100%; height:500px; left:0px; top:500px;"></div>
 
-    <script>
-        const config = {
-            gravity: 0.5,
-            jumpForce: -14,
-            acceleration: 0.8,
-            airAcceleration: 0.4,
-            maxSpeed: 8,
-            drag: 0.9,
-            screenFloor: 500
-        };
+<script>
+    const config = {
+        gravity: 0.5,
+        jumpForce: -10,
+        acceleration: 0.6,
+        airAcceleration: 0.6,
+        maxSpeed: 8,
+        drag: 0.9,
+        screenFloor: 500
+    };
 
-        let player;
-        let myVelocityX = 0;
-        let myVelocityY = 1;
-        let isGrounded = true;
-        const keysDown = {};
-        let paperExploded = false;
-        window.onload = function() {
-            player = document.getElementById('Player');
+    let player;
+    let myVelocityX = 0;
+    let myVelocityY = 1;
+    let isGrounded = true;
+    let playerState = 'scissors';
+    let paperExploded = false;
+    let scissorsExploded = false; 
+    const keysDown = {};
+
+    window.onload = function() {
+        player = document.getElementById('Player');
+        setHitboxes('scissors');
+
+        for (let i = 0; i < 4; i++) {
+            let d = document.createElement('div');
+            d.id = 'debug-' + i;
+            d.className = 'hitbox-visual';
+            document.body.appendChild(d);
+        }
+
+        window.addEventListener('keydown', e => keysDown[e.key.toLowerCase()] = true);
+        window.addEventListener('keyup', e => keysDown[e.key.toLowerCase()] = false);
+        setInterval(gameLoop, 20);
+    };
+
+    function setHitboxes(state) {
+        if (state === 'scissors') {
             player.hitboxes = [
                 { x: 70, y: 10, w: 20, h: 20 },
                 { x: 50, y: 25, w: 20, h: 20 },
                 { x: 30, y: 40, w: 20, h: 20 },
                 { x: 5, y: 55, w: 25, h: 27 }
             ];
-
-            player.hitboxes.forEach((box, index) => {
-                let d = document.createElement('div');
-                d.id = 'debug-' + index;
-                d.className = 'hitbox-visual';
-                document.body.appendChild(d);
-            });
-
-            window.addEventListener('keydown', e => keysDown[e.key.toLowerCase()] = true);
-            window.addEventListener('keyup', e => keysDown[e.key.toLowerCase()] = false);
-            setInterval(gameLoop, 20);
-        };
-
-        function getHitboxes(id) {
-            const el = document.getElementById(id);
-            if (!el) return [];
-            const r = el.getBoundingClientRect();
-            
-            if (id === 'Player' && el.hitboxes) {
-                const isFlipped = el.style.transform === 'scaleX(-1)';
-                const imgWidth = 100;
-
-                return el.hitboxes.map(box => {
-                    let posX = isFlipped ? (imgWidth - box.x - box.w) : box.x;
-                    return {
-                        left: r.left + posX,
-                        top: r.top + box.y,
-                        right: r.left + posX + box.w,
-                        bottom: r.top + box.y + box.h,
-                        localBottom: box.y + box.h // New: keep track of box offset
-                    };
-                });
-            }
-            return [r]; 
-        }
-
-        function isTouching(id1, id2) {
-            const boxes1 = getHitboxes(id1);
-            const boxes2 = getHitboxes(id2);
-            for (let r1 of boxes1) {
-                for (let r2 of boxes2) {
-                    if (r1.right > r2.left && r1.bottom > r2.top && r1.left < r2.right && r1.top < r2.bottom) return true;
-                }
-            }
-            return false;
-        }
-
-function handlePhysics() {
-    myVelocityX *= config.drag;
-    const accel = isGrounded ? config.acceleration : config.airAcceleration;
-
-    // Pressing 'a' (Left)
-    if (keysDown['a']) { 
-        myVelocityX -= accel; 
-        player.style.transform = 'scaleX(1)';  // Changed from -1 to 1
-    } 
-    
-    // Pressing 'd' (Right)
-    if (keysDown['d']) { 
-        myVelocityX += accel; 
-        player.style.transform = 'scaleX(-1)'; // Changed from 1 to -1
-    }
-    
-    if (Math.abs(myVelocityX) > config.maxSpeed) myVelocityX = myVelocityX > 0 ? config.maxSpeed : -config.maxSpeed;
-    
-    let currLeft = parseFloat(player.style.left) || 0;
-    player.style.left = (currLeft + myVelocityX) + 'px';
-
-    if (keysDown['w'] && isGrounded) {
-        myVelocityY = config.jumpForce;
-        isGrounded = false;
-    }
-}
-
-function checkCollisions() {
-    let onPlatform = false;
-    let onFloor = false;
-    let currTop = parseFloat(player.style.top) || 0;
-
-    const playerBoxes = getHitboxes('Player');
-    const allPlatforms = document.querySelectorAll('.platform');
-
-    myVelocityY += config.gravity;
-
-    // --- SMART PLATFORM COLLISION ---
-    if (myVelocityY > 0) { 
-        for (let plat of allPlatforms) {
-            const pRect = plat.getBoundingClientRect();
-            const pTop = parseInt(plat.style.top);
-            
-            for (let box of playerBoxes) {
-                // ADDED THE { HERE
-                if (box.right > pRect.left && box.left < pRect.right &&
-                    box.bottom > pRect.top && box.top < pRect.top + 20) { // Added height check
-                    
-                    player.style.top = (pTop - box.localBottom - 0.1) + 'px';
-                    myVelocityY = 0;
-                    onPlatform = true;
-                    break; 
-                }
-                // ADDED THE } HERE
-            }
-            if (onPlatform) break;
-        }
-    }
-
-    // --- FLOOR COLLISION ---
-    let maxBottomOffset = 0;
-    player.hitboxes.forEach(b => {
-        if (b.y + b.h > maxBottomOffset) maxBottomOffset = b.y + b.h;
-    });
-
-    if (!onPlatform) {
-        let nextTop = currTop + myVelocityY;
-        if (nextTop + maxBottomOffset >= config.screenFloor) {
-            player.style.top = (config.screenFloor - maxBottomOffset) + "px";
-            myVelocityY = 0;
-            onFloor = true;
         } else {
-            player.style.top = nextTop + "px";
+            player.hitboxes = [{ x: 0, y: 0, w: 100, h: 80 }];
         }
     }
 
-    isGrounded = onPlatform || onFloor;
-}
-        function gameLoop() {
-            handlePhysics();
-            checkCollisions();
-            
-            // Sync Debug Visuals
-            const currentHitboxes = getHitboxes('Player'); 
-            currentHitboxes.forEach((box, index) => {
-                const d = document.getElementById('debug-' + index);
-                if (d) {
-                    d.style.left = (box.left + window.scrollX) + 'px';
-                    d.style.top = (box.top + window.scrollY) + 'px';
-                    d.style.width = (box.right - box.left) + 'px';
-                    d.style.height = (box.bottom - box.top) + 'px';
-                }
+    function getHitboxes(id) {
+        const el = document.getElementById(id);
+        if (!el) return [];
+        const r = el.getBoundingClientRect();
+        
+        if (id === 'Player' && el.hitboxes) {
+            const isFlipped = el.style.transform === 'scaleX(-1)';
+            const imgWidth = 100;
+            return el.hitboxes.map(box => {
+                let posX = isFlipped ? (imgWidth - box.x - box.w) : box.x;
+                return {
+                    left: r.left + posX,
+                    top: r.top + box.y,
+                    right: r.left + posX + box.w,
+                    bottom: r.top + box.y + box.h,
+                    localBottom: box.y + box.h
+                };
             });
-
-            if (isTouching('Player', 'myDeathBox03')) {reset(); }
-            if (isTouching('Player', 'myWin01')) {reset(); }
-if (isTouching('Player', 'Paper02') && !paperExploded) {
-        const paper = document.getElementById('Paper02');
-        paper.src = 'explode.gif';
-        paperExploded = true;
-
-        // The timer must stay inside this IF block
-        setTimeout(() => {
-            paper.style.opacity = '0'
-        }, 1000)
-    }
-}
-
-        function reset() {
-            player.style.left = '50px'
-            player.style.top = '350px'
-            player.style.transform = 'scaleX(1)'
-
-            myVelocityX = 0;
-            myVelocityY = 0;
-
-paperExploded = false;
-            const paper = document.getElementById('Paper02');
-            paper.src = 'paper.png';
-            paper.style.opacity = '1';
         }
-    </script>
+        return [r]; 
+    }
+
+    function isTouching(id1, id2) {
+        const boxes1 = getHitboxes(id1);
+        const boxes2 = getHitboxes(id2);
+        for (let r1 of boxes1) {
+            for (let r2 of boxes2) {
+                if (r1.right > r2.left && r1.bottom > r2.top && r1.left < r2.right && r1.top < r2.bottom) return true;
+            }
+        }
+        return false;
+    }
+
+    function handlePhysics() {
+        myVelocityX *= config.drag;
+        const accel = isGrounded ? config.acceleration : config.airAcceleration;
+
+        if (keysDown['a']) { myVelocityX -= accel; player.style.transform = 'scaleX(1)'; } 
+        if (keysDown['d']) { myVelocityX += accel; player.style.transform = 'scaleX(-1)'; }
+        
+        if (Math.abs(myVelocityX) > config.maxSpeed) myVelocityX = myVelocityX > 0 ? config.maxSpeed : -config.maxSpeed;
+        
+        let currLeft = parseFloat(player.style.left) || 0;
+        player.style.left = (currLeft + myVelocityX) + 'px';
+
+        if (keysDown['w'] && isGrounded) {
+            myVelocityY = config.jumpForce;
+            isGrounded = false;
+        }
+    }
+
+    function checkCollisions() {
+        let onPlatform = false;
+        let currTop = parseFloat(player.style.top) || 0;
+        let currLeft = parseFloat(player.style.left) || 0;
+        const playerBoxes = getHitboxes('Player');
+        const allPlatforms = document.querySelectorAll('.platform');
+
+        myVelocityY += config.gravity;
+
+        // 1. Vertical Collision (Green Platforms)
+        if (myVelocityY > 0) { 
+            for (let plat of allPlatforms) {
+                const pRect = plat.getBoundingClientRect();
+                for (let box of playerBoxes) {
+                    if (box.right > pRect.left && box.left < pRect.right &&
+                        box.bottom > pRect.top && box.top < pRect.top + 15) {
+                        player.style.top = (parseInt(plat.style.top) - box.localBottom - 0.1) + 'px';
+                        myVelocityY = 0;
+                        onPlatform = true;
+                        break; 
+                    }
+                }
+                if (onPlatform) break;
+            }
+        }
+
+        // 2. Scissors Logic
+        if (!scissorsExploded) {
+            const sItem = document.getElementById('Scissors03');
+            const sRect = sItem.getBoundingClientRect();
+            
+            // IF ROCK: Allow overlap so it triggers the destruction in gameLoop
+            // IF SCISSORS: Block movement
+            if (playerState !== 'rock') {
+                for (let box of playerBoxes) {
+                    // Side collision (Wall)
+                    if (box.right > sRect.left && box.left < sRect.right && 
+                        box.bottom > sRect.top + 10 && box.top < sRect.bottom - 10) {
+                        
+                        // Larger push-back (10px) to prevent glitching inside
+                        if (myVelocityX > 0) player.style.left = (currLeft - 10) + "px";
+                        if (myVelocityX < 0) player.style.left = (currLeft + 10) + "px";
+                        myVelocityX = 0;
+                    }
+
+                    // Top collision (Landing)
+                    if (!onPlatform && playerState === 'scissors' && myVelocityY > 0) {
+                        if (box.right > sRect.left && box.left < sRect.right &&
+                            box.bottom > sRect.top && box.top < sRect.top + 15) {
+                            player.style.top = (parseInt(sItem.style.top) - box.localBottom - 0.1) + 'px';
+                            myVelocityY = 0;
+                            onPlatform = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!onPlatform) {
+            player.style.top = (currTop + myVelocityY) + "px";
+        }
+
+        isGrounded = onPlatform;
+        if (currTop > config.screenFloor + 100) reset();
+    }
+
+    function gameLoop() {
+        handlePhysics();
+        checkCollisions();
+          
+        // Debug Visuals
+        const currentHitboxes = getHitboxes('Player'); 
+        for (let i = 0; i < 4; i++) {
+            const d = document.getElementById('debug-' + i);
+            if (currentHitboxes[i]) {
+                d.style.display = 'block';
+                d.style.left = (currentHitboxes[i].left + window.scrollX) + 'px';
+                d.style.top = (currentHitboxes[i].top + window.scrollY) + 'px';
+                d.style.width = (currentHitboxes[i].right - currentHitboxes[i].left) + 'px';
+                d.style.height = (currentHitboxes[i].bottom - currentHitboxes[i].top) + 'px';
+            } else { d.style.display = 'none'; }
+        }
+
+        // Interaction logic
+        if (isTouching('Player', 'myDeathBox03')) reset();
+	if (isTouching('Player', 'myDeathBox04')) reset();
+        if (isTouching('Player', 'myWin01')) { alert('You Win!'); reset(); }
+        if (isTouching('Player', 'myGround04')) reset();
+
+        if (isTouching('Player', 'myRock01')) {
+            playerState = 'rock';
+            player.src = 'rock.png';
+            setHitboxes('rock');
+        }
+
+        if (isTouching('Player', 'Paper02')) {
+            if (playerState === 'rock') reset(); 
+            else if (playerState === 'scissors' && !paperExploded) {
+                const paper = document.getElementById('Paper02');
+                paper.src = 'explode.gif';
+                paperExploded = true;
+                setTimeout(() => { paper.style.opacity = '0'; paper.style.top = '2000px'; }, 1000);
+            }
+        }
+
+        if (isTouching('Player', 'Scissors03')) {
+            if (playerState === 'rock' && !scissorsExploded) {
+                const sItem = document.getElementById('Scissors03');
+                sItem.src = 'explode.gif';
+                scissorsExploded = true;
+                setTimeout(() => { sItem.style.opacity = '0'; sItem.style.top = '2000px'; }, 1000);
+            }
+        }
+    }
+
+    function reset() {
+        player.style.left = '0px';
+        player.style.top = '300px';
+        myVelocityX = 0;
+        myVelocityY = 0;
+        playerState = 'scissors';
+        player.src = 'Scissors.png';
+        setHitboxes('scissors');
+        
+        const paper = document.getElementById('Paper02');
+        paper.src = 'paper.png';
+        paper.style.opacity = '1';
+        paper.style.top = '320px';
+        paperExploded = false;
+
+        const sItem = document.getElementById('Scissors03');
+        sItem.src = 'Scissors.png';
+        sItem.style.opacity = '1';
+        sItem.style.top = '320px';
+        scissorsExploded = false;
+    }
+</script>
 </body>
 </html>
