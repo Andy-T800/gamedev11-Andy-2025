@@ -10,14 +10,12 @@
             box-sizing: border-box;
         }
 
-        /* Power-up styling with Hover Animation */
         .powerup {
             filter: drop-shadow(0 0 10px gold);
             cursor: pointer;
             animation: hoverEffect 2s ease-in-out infinite;
         }
 
-        /* Hover Keyframes: Moves 5px up and down */
         @keyframes hoverEffect {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-5px); }
@@ -44,29 +42,24 @@
 
     <img id="Player" src="Scissors.png" style="position:absolute; width:100px; height:80px; left:0px; top:300px;">
 
-<div class="platform" style="width:180px; height:10px; left:0px; top:420px;"></div>
-<div class="platform" style="width:90px; height:10px; left:260px; top:360px;"></div>
-<div class="platform" id="lowest-platform" style="width:90px; height:10px; left:260px; top:510px;"></div>
-<div class="platform" style="width:70px; height:10px; left:420px; top:300px;"></div>
-<div class="platform" style="width:100px; height:10px; left:550px; top:260px;"></div>
-<div class="platform" style="width:80px; height:10px; left:750px; top:220px;"></div>
-<div class="platform" style="width:120px; height:10px; left:900px; top:300px;"></div>
-<div class="platform" style="width:140px; height:10px; left:1080px; top:360px;"></div>
+    <div class="platform" style="width:180px; height:10px; left:0px; top:420px;"></div>
+    <div class="platform" style="width:90px; height:10px; left:260px; top:360px;"></div>
+    <div class="platform" id="lowest-platform" style="width:90px; height:10px; left:260px; top:510px;"></div>
+    <div class="platform" style="width:70px; height:10px; left:420px; top:300px;"></div>
+    <div class="platform" style="width:100px; height:10px; left:550px; top:260px;"></div>
+    <div class="platform" style="width:80px; height:10px; left:750px; top:220px;"></div>
+    <div class="platform" style="width:120px; height:10px; left:900px; top:300px;"></div>
+    <div class="platform" style="width:140px; height:10px; left:1080px; top:360px;"></div>
 
-<img id="myRock01" class="powerup" src="rock.png"
-     style="position:absolute; width:40px; height:40px; left:285px; top:470px;">
+    <img id="myRock01" class="powerup" src="rock.png" style="position:absolute; width:40px; height:40px; left:285px; top:470px;">
 
-<img id="Paper02" class="obstacle" src="paper.png"
-     style="position:absolute; width:50px; height:70px; left:420px; top:230px;">
+    <img id="Paper02" class="obstacle" src="paper.png" style="position:absolute; width:50px; height:70px; left:420px; top:230px;">
 
-<img id="Scissors03" class="obstacle" src="Scissors.png"
-     style="position:absolute; width:100px; height:80px; left:740px; top:140px;">
+    <img id="Scissors03" class="obstacle" src="Scissors.png" style="position:absolute; width:100px; height:80px; left:740px; top:140px;">
 
-<img id="myWin01" src="yellow.png"
-     style="position:absolute; width:50px; height:80px; left:1120px; top:280px;">
+    <img id="myWin01" src="yellow.png" style="position:absolute; width:50px; height:80px; left:1120px; top:280px;">
 
-<img id="myDeathBox03" src="red.png"
-     style="position:absolute; width:100%; height:10px; left:0px; top:680px;">
+    <img id="myDeathBox03" src="red.png" style="position:absolute; width:100%; height:10px; left:0px; top:680px;">
 
 <script>
     const config = {
@@ -86,11 +79,6 @@
     window.onload = function() {
         player = document.getElementById('Player');
         setHitboxes('scissors');
-        for (let i = 0; i < 4; i++) {
-            let d = document.createElement('div');
-            d.id = 'debug-' + i; d.className = 'hitbox-visual';
-            document.body.appendChild(d);
-        }
         window.addEventListener('keydown', e => keysDown[e.key.toLowerCase()] = true);
         window.addEventListener('keyup', e => keysDown[e.key.toLowerCase()] = false);
         setInterval(gameLoop, 20);
@@ -200,7 +188,9 @@
         checkCollisions();
         
         if (isTouching('Player', 'myDeathBox03')) reset();
-        if (isTouching('Player', 'myWin01')) { window.location.href = 'gameindex.html'; }
+        
+        // REDIRECT TO LVL2.HTML
+        if (isTouching('Player', 'myWin01')) { window.location.href = 'lvl2.html'; }
 
         if (isTouching('Player', 'myRock01') && document.getElementById('myRock01').style.display !== 'none') {
             playerState = 'rock';
@@ -213,14 +203,16 @@
             if (playerState === 'rock') reset(); 
             else if (playerState === 'scissors' && !paperExploded) {
                 const paper = document.getElementById('Paper02');
-                paper.src = 'explode.gif'; paperExploded = true;
+                paperExploded = true;
+                paper.src = 'explode.gif?t=' + new Date().getTime(); 
                 setTimeout(() => { paper.style.opacity = '0'; paper.style.top = '2000px'; }, 1000);
             }
         }
 
         if (isTouching('Player', 'Scissors03') && playerState === 'rock' && !scissorsExploded) {
             const sItem = document.getElementById('Scissors03');
-            sItem.src = 'explode.gif'; scissorsExploded = true;
+            scissorsExploded = true;
+            sItem.src = 'explode.gif?t=' + new Date().getTime();
             setTimeout(() => { sItem.style.opacity = '0'; sItem.style.top = '2000px'; }, 1000);
         }
     }
