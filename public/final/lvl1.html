@@ -133,54 +133,61 @@
         if (keysDown['w'] && isGrounded) { myVelocityY = config.jumpForce; isGrounded = false; }
     }
 
-    function checkCollisions() {
+function checkCollisions() {
         let onPlatform = false;
-        let currTop = parseFloat(player.style.top) || 0;
         const playerBoxes = getHitboxes('Player');
         const allPlatforms = document.querySelectorAll('.platform');
 
+        // 1. Apply gravity BEFORE checking platforms
         myVelocityY += config.gravity;
+        
+        // Calculate the target top position based on velocity
+        let potentialTop = (parseFloat(player.style.top) || 0) + myVelocityY;
 
+        // 2. Only check for landing if we are falling (velocityY >= 0)
         if (myVelocityY >= 0) { 
             for (let plat of allPlatforms) {
                 const pRect = plat.getBoundingClientRect();
                 for (let box of playerBoxes) {
+                    // Check if the bottom of the player's box is about to cross the top of the platform
                     if (box.right > pRect.left && box.left < pRect.right &&
-                        box.bottom > pRect.top && box.top < pRect.top + 10) {
-                        player.style.top = (parseInt(plat.style.top) - box.localBottom - 0.1) + 'px';
-                        myVelocityY = 0; onPlatform = true; break; 
+                        box.bottom <= pRect.top + 5 && (box.bottom + myVelocityY) >= pRect.top) {
+                        
+                        // SNAP: Set player position exactly on top of the platform
+                        player.style.top = (parseInt(plat.style.top) - box.localBottom) + 'px';
+                        myVelocityY = 0; 
+                        onPlatform = true; 
+                        break; 
                     }
                 }
                 if (onPlatform) break;
             }
         }
 
-        if (!scissorsExploded && playerState !== 'rock') {
+        // Logic for the Scissors obstacle (collision as a wall/platform)
+        if (!scissorsExploded && playerState !== 'rock' && !onPlatform) {
             const sItem = document.getElementById('Scissors03');
             const sRect = sItem.getBoundingClientRect();
             for (let box of playerBoxes) {
-                if (box.bottom > sRect.top + 10) {
-                    if (box.right > sRect.left && box.left < sRect.left && myVelocityX > 0) {
-                        player.style.left = (parseFloat(player.style.left) - (box.right - sRect.left) - 1) + "px";
-                        myVelocityX = 0;
-                    } else if (box.left < sRect.right && box.right > sRect.right && myVelocityX < 0) {
-                        player.style.left = (parseFloat(player.style.left) + (sRect.right - box.left) + 1) + "px";
-                        myVelocityX = 0;
-                    }
-                }
-                if (!onPlatform && playerState === 'scissors' && myVelocityY >= 0) {
-                    if (box.right > sRect.left && box.left < sRect.right &&
-                        box.bottom > sRect.top && box.top < sRect.top - 5) {
-                        player.style.top = (parseInt(sItem.style.top) - box.localBottom - 0.1) + 'px';
-                        myVelocityY = 0; onPlatform = true;
-                    }
+                // Vertical collision for Scissors obstacle top
+                if (myVelocityY >= 0 && box.right > sRect.left && box.left < sRect.right &&
+                    box.bottom <= sRect.top + 5 && (box.bottom + myVelocityY) >= sRect.top) {
+                    player.style.top = (parseInt(sItem.style.top) - box.localBottom) + 'px';
+                    myVelocityY = 0; 
+                    onPlatform = true;
                 }
             }
         }
 
-        if (!onPlatform) player.style.top = (currTop + myVelocityY) + "px";
+        // 3. Move the player vertically ONLY if they didn't just land on a platform
+        if (!onPlatform) {
+            player.style.top = potentialTop + "px";
+        }
+        
         isGrounded = onPlatform;
-        if (currTop > 800) reset();
+        
+        // Reset if falling off screen
+        if (parseFloat(player.style.top) > 800) reset();
     }
 
     function gameLoop() {
