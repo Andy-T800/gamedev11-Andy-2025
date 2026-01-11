@@ -1,20 +1,17 @@
 <html>
 <head>
     <style>
-        /* Smooth transition removed to prevent visual lag during physics snaps */
-        #Player { transform-origin: center; }
-        #myGround04 { background-color: #836539;}
+        /* Smooth physics without shaking */
+        #Player { transform-origin: center; z-index: 10; }
         
         .platform {
-            background-color: green;
+            background-color: green; 
             position: absolute;
             box-sizing: border-box;
-            border-top: 2px solid lightgreen;
         }
 
         .powerup {
             filter: drop-shadow(0 0 10px gold);
-            cursor: pointer;
             animation: hoverEffect 2s ease-in-out infinite;
         }
 
@@ -23,48 +20,27 @@
             50% { transform: translateY(-10px); }
         }
 
-        #Scissors03 {
-            filter: sepia(1) saturate(5) hue-rotate(-50deg);
-        }
+        .obstacle { filter: sepia(1) saturate(5) hue-rotate(-50deg); }
     </style>
 </head>
 
-<body id="myBody" style="background-color: skyblue; overflow: hidden;">
+<body id="myBody" style="background-image: url('background01.png'); background-size: cover; background-repeat: no-repeat; background-color: #87CEEB; overflow: hidden;">
 
-    <h1 align="center"><font color="red">Level 2</font></h1>
+    <h1 align="center" style="color: white; text-shadow: 2px 2px black;">Level 3</h1>
 
-    <img id="Player" src="Scissors.png" style="position:absolute; width:100px; height:80px; left:55px; top:300px;">
+    <img id="Player" src="Scissors.png" style="position:absolute; width:100px; height:80px; left:50px; top:350px;">
 
-    <div class="platform" style="width:120px; height:15px; left:55px; top:420px;"></div>
-    <div class="platform" style="width:90px; height:15px; left:430px; top:415px;"></div>
-    <div class="platform" id="lowest-platform" style="width:90px; height:15px; left:320px; top:510px;"></div>
-    <div class="platform" style="width:90px; height:15px; left:445px; top:270px;"></div>
-    <div class="platform" style="width:90px; height:15px; left:695px; top:270px;"></div>
-    
-    <div class="platform" style="width:120px; height:15px; left:950px; top:550px;"></div>
-    <div class="platform" style="width:140px; height:15px; left:1200px; top:450px;"></div>
+    <div class="platform" style="width:120px; height:15px; left:50px; top:450px;"></div> <div class="platform" style="width:150px; height:15px; left:250px; top:550px;"></div> 
+    <div class="platform" style="width:110px; height:15px; left:450px; top:420px;"></div> <div class="platform" style="width:110px; height:15px; left:420px; top:220px;"></div> <div class="platform" style="width:110px; height:15px; left:630px; top:220px;"></div> <div class="platform" style="width:150px; height:15px; left:750px; top:450px;"></div> <img id="myRock01" class="powerup" src="rock.png" style="position:absolute; width:45px; height:45px; left:830px; top:400px;">
 
-    <img id="myRock01" class="powerup" src="rock.png" style="position:absolute; width:40px; height:40px; left:340px; top:460px;">
+    <img id="Paper01" class="obstacle" src="paper.png" style="position:absolute; width:50px; height:70px; left:330px; top:250px;">
+    <img id="Paper02" class="obstacle" src="paper.png" style="position:absolute; width:50px; height:70px; left:750px; top:150px;">
 
-    <img id="Paper02" class="obstacle" src="paper.png" style="position:absolute; width:50px; height:70px; left:460px; top:190px;">
-
-    <img id="Scissors03" class="obstacle" src="Scissors.png" style="position:absolute; width:100px; height:80px; left:740px; top:190px;">
-
-    <img id="myWin01" src="yellow.png" style="position:absolute; width:50px; height:80px; left:1250px; top:370px;">
-
-    <img id="myDeathBox03" src="red.png" style="position:absolute; width:100%; height:20px; left:0px; top:680px;">
+    <img id="myWin01" src="yellow.png" style="position:absolute; width:60px; height:90px; left:920px; top:380px;">
 
 <script>
-    const config = {
-        gravity: 0.5,
-        jumpForce: -12, // Increased slightly for better jumping
-        acceleration: 0.7,
-        maxSpeed: 8,
-        drag: 0.85
-    };
-
-    let player, myVelocityX = 0, myVelocityY = 0, isGrounded = false;
-    let playerState = 'scissors', paperExploded = false, scissorsExploded = false; 
+    const config = { gravity: 0.5, jumpForce: -11, acceleration: 0.7, maxSpeed: 8, drag: 0.9 };
+    let player, myVelocityX = 0, myVelocityY = 0, isGrounded = false, playerState = 'scissors';
     const keysDown = {};
 
     window.onload = function() {
@@ -76,22 +52,18 @@
     };
 
     function setHitboxes(state) {
-        if (state === 'scissors') {
-            player.hitboxes = [
-                { x: 70, y: 10, w: 20, h: 20 }, { x: 5, y: 55, w: 25, h: 27 }
-            ];
-        } else {
-            player.hitboxes = [{ x: 0, y: 0, w: 100, h: 80 }];
-        }
+        player.hitboxes = (state === 'scissors') ? 
+            [{x: 70, y: 10, w: 20, h: 20}, {x: 5, y: 55, w: 25, h: 27}] : 
+            [{x: 0, y: 0, w: 100, h: 80}];
     }
 
     function getHitboxes(id) {
         const el = document.getElementById(id);
-        if (!el || el.style.display === 'none' || el.style.opacity === '0') return [];
+        if (!el || el.style.display === 'none') return [];
         const r = el.getBoundingClientRect();
-        if (id === 'Player' && el.hitboxes) {
+        if (id === 'Player') {
             const isFlipped = el.style.transform.includes('scaleX(-1)');
-            return el.hitboxes.map(box => {
+            return player.hitboxes.map(box => {
                 let posX = isFlipped ? (100 - box.x - box.w) : box.x;
                 return {
                     left: r.left + posX, top: r.top + box.y,
@@ -100,41 +72,41 @@
                 };
             });
         }
-        return [r]; 
+        return [r];
     }
 
     function isTouching(id1, id2) {
-        const boxes1 = getHitboxes(id1), boxes2 = getHitboxes(id2);
-        for (let r1 of boxes1) for (let r2 of boxes2)
+        const b1 = getHitboxes(id1), b2 = getHitboxes(id2);
+        for (let r1 of b1) for (let r2 of b2)
             if (r1.right > r2.left && r1.bottom > r2.top && r1.left < r2.right && r1.top < r2.bottom) return true;
         return false;
     }
 
     function gameLoop() {
-        // Horizontal
+        // Horizontal Movement
         myVelocityX *= config.drag;
-        if (keysDown['a']) { myVelocityX -= config.acceleration; player.style.transform = 'scaleX(1)'; } 
+        if (keysDown['a']) { myVelocityX -= config.acceleration; player.style.transform = 'scaleX(1)'; }
         if (keysDown['d']) { myVelocityX += config.acceleration; player.style.transform = 'scaleX(-1)'; }
-        
-        let currLeft = parseFloat(player.style.left) || 0;
-        player.style.left = (currLeft + myVelocityX) + 'px';
+        player.style.left = (parseFloat(player.style.left) || 0) + myVelocityX + 'px';
 
-        // Vertical
+        // Vertical Movement & Gravity
         myVelocityY += config.gravity;
         let currTop = parseFloat(player.style.top) || 0;
+
+        // Collision Logic (NO SHAKING)
         let onPlatform = false;
         const playerBoxes = getHitboxes('Player');
+        const platforms = document.querySelectorAll('.platform');
 
-        // Landing Logic
-        if (myVelocityY >= 0) { 
-            const platforms = document.querySelectorAll('.platform');
+        if (myVelocityY >= 0) {
             platforms.forEach(plat => {
                 const pRect = plat.getBoundingClientRect();
-                const pTop = pRect.top + window.scrollY; 
+                const pTop = parseFloat(plat.style.top);
                 playerBoxes.forEach(box => {
+                    // Check if player's bottom is above platform top and next move goes through it
                     if (box.right > pRect.left && box.left < pRect.right &&
-                        box.bottom <= pTop + 5 && (box.bottom + myVelocityY) >= pTop) {
-                        player.style.top = (parseFloat(plat.style.top) - box.localBottom) + 'px';
+                        box.bottom <= pTop && (box.bottom + myVelocityY) >= pTop) {
+                        player.style.top = (pTop - box.localBottom) + 'px';
                         myVelocityY = 0;
                         onPlatform = true;
                     }
@@ -147,61 +119,21 @@
         }
 
         isGrounded = onPlatform;
-        if (keysDown['w'] && isGrounded) {
-            myVelocityY = config.jumpForce;
-            isGrounded = false;
-        }
+        if (isGrounded && keysDown['w']) { myVelocityY = config.jumpForce; isGrounded = false; }
 
-        // Hazards & Goal
-        if (isTouching('Player', 'myDeathBox03')) reset();
-        if (isTouching('Player', 'myWin01')) { window.location.href = 'lvl3.html'; }
-
-        // Rock Powerup
+        // Interactions
         if (isTouching('Player', 'myRock01')) {
-            playerState = 'rock';
-            player.src = 'rock.png';
-            setHitboxes('rock');
+            playerState = 'rock'; player.src = 'rock.png'; setHitboxes('rock');
             document.getElementById('myRock01').style.display = 'none';
         }
-
-        // Paper Obstacle
-        if (isTouching('Player', 'Paper02')) {	
-            if (playerState === 'rock') reset(); 
-            else if (!paperExploded) {
-                const paper = document.getElementById('Paper02');
-                paperExploded = true;
-                paper.src = 'explode.gif?t=' + Date.now(); 
-                setTimeout(() => { paper.style.display = 'none'; }, 1000);
-            }
-        }
-
-        // Scissors Obstacle
-        if (isTouching('Player', 'Scissors03')) {
-            if (playerState === 'rock' && !scissorsExploded) {
-                const sItem = document.getElementById('Scissors03');
-                scissorsExploded = true;
-                sItem.src = 'explode.gif?t=' + Date.now();
-                setTimeout(() => { sItem.style.display = 'none'; }, 1000);
-            } else if (playerState === 'scissors') {
-                // Bounce back if hitting solid scissors in scissor form
-                myVelocityX = -myVelocityX * 2;
-            }
-        }
-
-        if (parseFloat(player.style.top) > 1000) reset();
+        if (isTouching('Player', 'myWin01')) alert("Level 3 Complete!");
+        if (parseFloat(player.style.top) > 800) reset();
     }
 
     function reset() {
-        player.style.left = '55px'; player.style.top = '300px';
+        player.style.left = '50px'; player.style.top = '350px';
         myVelocityX = 0; myVelocityY = 0;
         playerState = 'scissors'; player.src = 'Scissors.png'; setHitboxes('scissors');
-        
-        const paper = document.getElementById('Paper02');
-        paper.src = 'paper.png'; paper.style.display = 'block'; paperExploded = false;
-
-        const sItem = document.getElementById('Scissors03');
-        sItem.src = 'Scissors.png'; sItem.style.display = 'block'; scissorsExploded = false;
-
         document.getElementById('myRock01').style.display = 'block';
     }
 </script>
