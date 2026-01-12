@@ -1,51 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>t2a19-leet-andy.html</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+        }
+
+        #solution {
+            display: none;
+        }
+
+        button {
+            padding: 8px 12px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
 <body>
+
 <h1>t2a19-leet-andy.html</h1>
-<br><br><li> Show your prompt here  
-make a beginner leetcode problem  
 
-<br><br><li> Show the Leet question here  
-Write a function that takes a string as input and returns the reversed string.  
+<hr>
 
-<br><br><li> Within PRE tags show your version of the leet answer without looking at the actual answer. <br>
+<li><b>Show your prompt here</b></li>
+<p>
+This is a beginner LeetCode-style problem about strings.
+</p>
+
+<hr>
+
+<li><b>Show the Leet question here</b></li>
+<p>
+Write a function that takes a string as input and returns the reversed string.
+</p>
+
+<p><b>Example:</b></p>
+<pre>
+Input:  "string"
+Output: "gnirts"
+</pre>
+
+<hr>
+
+<li><b>Your attempt (without looking at the solution)</b></li>
 
 <pre>
-This code is in the pre tag
-    it save spaces and linebreaks
-                For example this is shifted in
-<div id="rev">...</div>
+&lt;div id="rev"&gt;...&lt;/div&gt;
+
 let str = "string"
 let reverse = reverse()
 document.getElementById(rev).innerHTML = reversed
 </pre>
 
-<br><br><li> Put the chatGPT working code here.  
+<hr>
 
+<li><b>Click to reveal the final working code</b></li>
+
+<button onclick="showSolution()">Show Final Working Code</button>
+
+<div id="solution">
 <pre>
-This code is in the pre tag
-    it save spaces and linebreaks
-                For example this is shifted in
-<div id="rev">...</div>
-let str = "string"
+&lt;div id="rev"&gt;...&lt;/div&gt;
+
+let str = "string";
 let reversed = str.split("").reverse().join("");
 document.getElementById("rev").innerHTML = reversed;
 </pre>
+</div>
 
-<br><br><li> Full working HTML example  
+<hr>
+
+<li><b>Full working HTML example</b></li>
+
+<p>Reversed string output:</p>
 
 <!-- Div where reversed string will appear -->
 <div id="rev2"></div>
 
 <script>
-    // Function to reverse a string
+    // Function to reverse a string (LeetCode-style)
     function reverseString(str) {
         return str.split("").reverse().join("");
     }
 
-    // Example string
-    const str = "string";
+    // Example test case
+    const input = "string";
+    const output = reverseString(input);
 
-    // Reverse the string and display it
-    document.getElementById("rev2").innerHTML = reverseString(str);
+    document.getElementById("rev2").innerHTML =
+        "Input: " + input + "<br>Output: " + output;
+
+    // Button function to reveal solution
+    function showSolution() {
+        document.getElementById("solution").style.display = "block";
+    }
 </script>
 
 </body>
