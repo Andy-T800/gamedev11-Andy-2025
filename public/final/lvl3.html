@@ -61,17 +61,35 @@
             [{ x: 0, y: 0, w: 100, h: 80 }];
     }
 
-    function getHitboxes(id) {
+function getHitboxes(id) {
         const el = document.getElementById(id);
         if (!el || el.style.display === 'none' || el.style.opacity === '0') return [];
         const r = el.getBoundingClientRect();
-        if (id === 'Player') {
+
+        // Check if the object is the Player OR the Scissors Obstacle
+        if (id === 'Player' || id.includes('Scissors')) {
             const isFlipped = el.style.transform.includes('scaleX(-1)');
-            return player.hitboxes.map(box => {
+            
+            // Refined hitbox: Handle, Pivot, and Blades
+            const subBoxes = [
+                { x: 5, y: 45, w: 30, h: 30 },  // Handle area
+                { x: 35, y: 30, w: 30, h: 25 }, // Center pivot
+                { x: 65, y: 5, w: 30, h: 35 }   // Blade tips
+            ];
+
+            return subBoxes.map(box => {
                 let posX = isFlipped ? (100 - box.x - box.w) : box.x;
-                return { left: r.left + posX, top: r.top + box.y, right: r.left + posX + box.w, bottom: r.top + box.y + box.h, localBottom: box.y + box.h };
+                return { 
+                    left: r.left + posX, 
+                    top: r.top + box.y, 
+                    right: r.left + posX + box.w, 
+                    bottom: r.top + box.y + box.h, 
+                    localBottom: box.y + box.h 
+                };
             });
         }
+        
+        // Default box for rocks, paper, and platforms
         return [r]; 
     }
 
