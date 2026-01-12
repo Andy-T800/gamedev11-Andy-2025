@@ -5,18 +5,14 @@
         .platform, .moveplatform { position: absolute; box-sizing: border-box; }
         .platform { background-color: green; }
         .moveplatform { background-color: lightgreen; }
-        /* Style for the new Death Box */
-        .death-box { 
+        
+        /* The Red Death Platform */
+        .death-platform { 
             position: absolute; 
-            background-color: rgba(255, 0, 0, 0.6); 
-            border: 2px solid red;
-            color: white;
-            font-family: Arial;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-color: red; 
+            pointer-events: none;
         }
+
         .powerup { 
             filter: drop-shadow(0 0 10px gold); 
             animation: hoverEffect 2s ease-in-out infinite; 
@@ -33,17 +29,17 @@
 
     <h1 align="center"><font color="red">Level 3</font></h1>
 
-    <div id="DeathBarrier" class="death-box" style="width:1200px; height:40px; left:0px; top:320px;">
-        DANGER: USE THE PLATFORM TO GO DOWN
-    </div>
+    <div id="DeathBox" class="death-platform" style="width:1180px; height:15px; left:0px; top:400px;"></div>
 
     <img id="Player" src="Scissors.png" style="position:absolute; width:100px; height:80px; left:0px; top:140px;">
 
     <div class="moveplatform" id="myMover" style="width:90px; height:10px; left:0px; top:220px; color: green; display: flex; align-items: center; justify-content: center; line-height: 10px; font-size: 10px;">ccc</div>
     <div class="moveplatform" id="myMover2" style="width:90px; height:10px; left:1200px; top:650px;"></div>
     <div class="moveplatform" id="myMover3" style="width:90px; height:10px; left:800px; top:650px;"></div>
+    
     <div class="platform" style="width:200px; height:20px; left:1290px; top:400px;"></div> 
     <div class="platform" style="width:200px; height:20px; left:1750px; top:360px;"></div>   
+
     <img id="myRock01" class="powerup" src="rock.png" style="position:absolute; width:40px; height:40px; left:0px; top:170px;">
     <img id="Paper02" class="obstacle" src="paper.png" style="position:absolute; width:50px; height:70px; left:420px; top:150px;">
     <img id="Paper03" class="obstacle" src="paper.png" style="position:absolute; width:50px; height:70px; left:820px; top:150px;">
@@ -56,25 +52,19 @@
 
 <script>
     const config = {
-        gravity: 0.5,
-        jumpForce: -11,
-        acceleration: 0.8,
-        airAcceleration: 0.8,
-        maxSpeed: 8,
-        drag: 0.9
+        gravity: 0.5, jumpForce: -11, acceleration: 0.8,
+        airAcceleration: 0.8, maxSpeed: 8, drag: 0.9
     };
 
     let player, myVelocityX = 0, myVelocityY = 1, isGrounded = true;
-    let playerState = 'scissors';
-    let plat1Dir = 1, plat2Dir = 1, plat3Dir = 1; 
-    let activePlatform = null; 
-    const keysDown = {};
+    let playerState = 'scissors', plat1Dir = 1, plat2Dir = 1, plat3Dir = 1; 
+    let activePlatform = null; const keysDown = {};
 
     window.onload = function() {
         player = document.getElementById('Player');
         setHitboxes('scissors');
         window.addEventListener('keydown', e => keysDown[e.key.toLowerCase()] = true);
-        window.addEventListener('keyup', e => keysDown[e.key.=.toLowerCase()] = false);
+        window.addEventListener('keyup', e => keysDown[e.key.toLowerCase()] = false);
         setInterval(gameLoop, 20);
     };
 
@@ -125,7 +115,7 @@
     }
 
     function gameLoop() {
-        // --- 1. PLATFORM MOVEMENTS ---
+        // Platform movement
         const plat1 = document.getElementById('myMover');
         let oldP1L = parseFloat(plat1.style.left) || 0;
         let newP1L = oldP1L + (3.0 * plat1Dir);
@@ -147,7 +137,7 @@
         if (newP3L > 1100) plat3Dir = -1; else if (newP3L < 500) plat3Dir = 1;
         let p3DeltaX = newP3L - oldP3L;
 
-        // --- 2. APPLY STICKY MOTION ---
+        // Sticky physics
         if (activePlatform) {
             let pL = parseFloat(player.style.left) || 0;
             let pT = parseFloat(player.style.top) || 0;
@@ -156,7 +146,7 @@
             if (activePlatform.id === 'myMover3') player.style.left = (pL + p3DeltaX) + 'px';
         }
 
-        // --- 3. PHYSICS ---
+        // Horizontal & Vertical movement
         myVelocityX *= config.drag;
         const accel = isGrounded ? config.acceleration : config.airAcceleration;
         if (keysDown['a']) { myVelocityX -= accel; player.style.transform = 'scaleX(1)'; } 
@@ -167,7 +157,7 @@
         myVelocityY += config.gravity;
         player.style.top = (parseFloat(player.style.top) || 0) + myVelocityY + "px";
 
-        // --- 4. COLLISIONS ---
+        // Solid Platform Collision
         let onPlatform = false;
         const playerBoxes = getHitboxes('Player');
         const allPlatforms = document.querySelectorAll('.platform, .moveplatform');
@@ -178,9 +168,7 @@
                 if (myVelocityY >= 0 && box.right > pRect.left && box.left < pRect.right &&
                     box.bottom >= pRect.top && box.top < pRect.top) {
                     player.style.top = (parseFloat(plat.style.top) - box.localBottom) + 'px';
-                    myVelocityY = 0; 
-                    onPlatform = true; 
-                    activePlatform = plat;
+                    myVelocityY = 0; onPlatform = true; activePlatform = plat;
                     break;
                 }
             }
@@ -193,14 +181,13 @@
             if (keysDown['w']) { myVelocityY = config.jumpForce; isGrounded = false; activePlatform = null; }
         }
 
-        // --- 5. GAME LOGIC ---
-
-        // NEW: Check for Death Barrier collision
-        if (isTouching('Player', 'DeathBarrier')) {
+        // DEATH BOX LOGIC (Check if touching Red)
+        if (isTouching('Player', 'DeathBox')) {
             reset();
         }
 
-        if (isTouching('Player', 'myWin01')) { window.location.href = 'gameindex.html'; }
+        // Interaction Logic
+        if (isTouching('Player', 'myWin01')) { window.location.href = 'lvl3.html'; }
 
         if (isTouching('Player', 'myRock01') && document.getElementById('myRock01').style.display !== 'none') {
             playerState = 'rock'; player.src = 'rock.png'; setHitboxes('rock');
@@ -216,17 +203,13 @@
             const paper = document.getElementById(id);
             if (isTouching('Player', id) && paper.style.display !== 'none') {
                 if (playerState === 'rock') reset();
-                else if (playerState === 'scissors') {
-                    triggerExplosion(paper);
-                }
+                else if (playerState === 'scissors') triggerExplosion(paper);
             }
         });
 
         if (isTouching('Player', 'Scissors03') && playerState === 'rock') {
             const sWall = document.getElementById('Scissors03');
-            if (sWall.style.display !== 'none') {
-                triggerExplosion(sWall);
-            }
+            if (sWall.style.display !== 'none') triggerExplosion(sWall);
         }
 
         if (parseFloat(player.style.top) > 900) reset();
@@ -238,7 +221,6 @@
         playerState = 'scissors'; player.src = 'Scissors.png'; setHitboxes('scissors');
         activePlatform = null;
         plat1Dir = 1; plat2Dir = 1; plat3Dir = 1;
-        
         document.getElementById('myMover').style.left = '0px';
         document.getElementById('myMover2').style.top = '650px';
         document.getElementById('myMover3').style.left = '800px';
