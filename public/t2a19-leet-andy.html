@@ -20,14 +20,15 @@
             overflow-x: auto;
         }
 
-        /* The box that will be reversed */
-        #code-to-reverse {
+        /* The display area for the result */
+        #rev-output {
             background-color: #2d2d2d;
             color: #66d9ef;
             padding: 15px;
             font-family: monospace;
             border-radius: 4px;
             margin: 10px 0;
+            min-height: 1.2em;
         }
 
         button {
@@ -73,39 +74,36 @@ Output: "gnirts"
 
 <hr>
 
-<li><b>Your attempt (Fixed & Functional)</b></li>
+<li><b>Your attempt</b></li>
+<pre>
+let str = "string";
+let reversed = str.split("").reverse().join("");
+document.getElementById("rev-output").innerHTML = reversed;
+</pre>
 
-<div id="code-to-reverse">let reversed = str.split("").reverse().join("");</div>
+<button onclick="runReverseCode()">Run Code (Reverse String)</button>
 
-<button onclick="reverseDisplayCode()">Reverse the Code Above</button>
-
-<hr>
-
-<li><b>Full working HTML example</b></li>
-
-<p>Reversed string output logic:</p>
-
-<div id="rev2" style="font-weight: bold; color: blue;"></div>
+<div id="rev-output">Click the button to see the result...</div>
 
 <script>
-    // 1. Function to reverse a string (The Logic)
+    // 1. The core function
     function reverseString(str) {
         return str.split("").reverse().join("");
     }
 
-    // 2. Initial Setup to show it works on page load
+    // 2. Setup the test case on page load
     const input = "string";
     const output = reverseString(input);
     document.getElementById("rev2").innerHTML =
         "Input: " + input + " | Output: " + output;
 
-    // 3. The Button Function: Reverses the text inside the code box
-    function reverseDisplayCode() {
-        const codeBox = document.getElementById("code-to-reverse");
-        const currentText = codeBox.innerText;
+    // 3. The Button Function: Executes the "reverse" logic on the word "string"
+    function runReverseCode() {
+        const str = "string";
+        const reversed = reverseString(str);
         
-        // Reverse the string and update the box
-        codeBox.innerText = currentText.split("").reverse().join("");
+        // Output the result to the div
+        document.getElementById("rev-output").innerText = reversed;
     }
 </script>
 
