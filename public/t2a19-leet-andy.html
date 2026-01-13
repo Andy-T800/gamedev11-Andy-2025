@@ -7,21 +7,42 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
         }
 
         pre {
             background-color: #f4f4f4;
-            padding: 10px;
+            padding: 15px;
+            border-left: 5px solid #ccc;
+            overflow-x: auto;
         }
 
-        #solution {
-            display: none;
+        /* The box that will be reversed */
+        #code-to-reverse {
+            background-color: #2d2d2d;
+            color: #66d9ef;
+            padding: 15px;
+            font-family: monospace;
+            border-radius: 4px;
+            margin: 10px 0;
         }
 
         button {
-            padding: 8px 12px;
+            padding: 10px 15px;
             margin-top: 10px;
             cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #218838;
         }
     </style>
 </head>
@@ -52,57 +73,39 @@ Output: "gnirts"
 
 <hr>
 
-<li><b>Your attempt (without looking at the solution)</b></li>
+<li><b>Your attempt (Fixed & Functional)</b></li>
 
-<pre>
-&lt;div id="rev"&gt;...&lt;/div&gt;
+<div id="code-to-reverse">let reversed = str.split("").reverse().join("");</div>
 
-let str = "string"
-let reverse = reverse()
-document.getElementById(rev).innerHTML = reversed
-</pre>
-
-<hr>
-
-<li><b>Click to reveal the final working code</b></li>
-
-<button onclick="showSolution()">Show Final Working Code</button>
-
-<div id="solution">
-<pre>
-&lt;div id="rev"&gt;...&lt;/div&gt;
-
-let str = "string";
-let reversed = str.split("").reverse().join("");
-document.getElementById("rev").innerHTML = reversed;
-</pre>
-</div>
+<button onclick="reverseDisplayCode()">Reverse the Code Above</button>
 
 <hr>
 
 <li><b>Full working HTML example</b></li>
 
-<p>Reversed string output:</p>
+<p>Reversed string output logic:</p>
 
-<!-- Div where reversed string will appear -->
-<div id="rev2"></div>
+<div id="rev2" style="font-weight: bold; color: blue;"></div>
 
 <script>
-    // Function to reverse a string (LeetCode-style)
+    // 1. Function to reverse a string (The Logic)
     function reverseString(str) {
         return str.split("").reverse().join("");
     }
 
-    // Example test case
+    // 2. Initial Setup to show it works on page load
     const input = "string";
     const output = reverseString(input);
-
     document.getElementById("rev2").innerHTML =
-        "Input: " + input + "<br>Output: " + output;
+        "Input: " + input + " | Output: " + output;
 
-    // Button function to reveal solution
-    function showSolution() {
-        document.getElementById("solution").style.display = "block";
+    // 3. The Button Function: Reverses the text inside the code box
+    function reverseDisplayCode() {
+        const codeBox = document.getElementById("code-to-reverse");
+        const currentText = codeBox.innerText;
+        
+        // Reverse the string and update the box
+        codeBox.innerText = currentText.split("").reverse().join("");
     }
 </script>
 
