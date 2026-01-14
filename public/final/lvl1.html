@@ -194,7 +194,9 @@
         checkCollisions();
         
         if (isTouching('Player', 'myDeathBox03')) reset();
-        if (isTouching('Player', 'myWin01')) { alert("Level Complete!"); reset(); }
+        if (isTouching('Player', 'myWin01')) {
+            location = 'lvl2.html'; 
+        }
 
         if (isTouching('Player', 'myRock01') && document.getElementById('myRock01').style.display !== 'none') {
             playerState = 'rock';
