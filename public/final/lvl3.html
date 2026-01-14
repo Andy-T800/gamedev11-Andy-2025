@@ -2,11 +2,18 @@
 <html>
 <head>
     <style>
-        #Player { transform-origin: center; transition: transform 0.1s; z-index: 10; }
+        body { margin: 0; overflow: hidden; background-color: #87CEEB; }
         
+        #Player { 
+            position: absolute; 
+            z-index: 10;
+            transition: transform 0.1s;
+        }
+        
+        /* Fixed Platform Styling */
         .paper-platform {
             position: absolute;
-            height: 12px; 
+            height: 15px; 
             background-image: url('paper.png');
             background-size: 100% 100%;
             background-repeat: no-repeat;
@@ -21,11 +28,11 @@
 
         #DeathWall {
             position: absolute;
-            width: 60px;
+            width: 80px;
             height: 100%;
             background: linear-gradient(to right, rgba(255,0,0,0.8), rgba(255,0,0,0));
-            border-left: 5px dashed yellow;
-            left: -100px;
+            border-left: 8px dashed yellow;
+            left: -200px;
             top: 0;
             z-index: 15;
             display: none;
@@ -51,16 +58,18 @@
 
         #GameWorld {
             position: relative;
-            width: 5000px;
+            width: 4500px;
             height: 100vh;
             transition: transform 0.1s ease-out;
         }
     </style>
 </head>
 
-<body id="myBody" style="background-repeat:repeat; background-size: 80%; margin: 0; overflow: hidden;" background="sky.png">
+<body id="myBody" background="sky.png" style="background-repeat:repeat; background-size: 80%">
 
-    <h1 align="center" style="position: fixed; width: 100%; pointer-events: none; font-family: sans-serif;"><font color="blue">Paper World: The Stationary Gauntlet</font></h1>
+    <h1 align="center" style="position: fixed; width: 100%; pointer-events: none; font-family: sans-serif; z-index: 100;">
+        <font color="blue">Paper World: The Great Escape</font>
+    </h1>
 
     <div id="ScissorCannon" class="cannon" style="top: 200px;"></div>
     <div id="RockCannon" class="cannon" style="top: 400px;"></div>
@@ -69,10 +78,27 @@
         <div id="DeathWall"></div>
         <img id="Player" src="paper.png" style="position:absolute; width:100px; height:80px; left:100px; top:200px;">
 
-        <div class="paper-platform" style="width:250px; left:50px; top:450px;"></div>
-        <div id="PlatformContainer"></div>
+        <div id="PlatformContainer">
+            <div class="paper-platform" style="width:250px; left:50px; top:450px;"></div>
+            
+            <div class="paper-platform" style="width:150px; left:400px; top:400px;"></div>
+            <div class="paper-platform" style="width:150px; left:650px; top:320px;"></div>
+            <div class="paper-platform" style="width:200px; left:900px; top:450px;"></div>
+            <div class="paper-platform" style="width:150px; left:1200px; top:350px;"></div>
+            <div class="paper-platform" style="width:150px; left:1450px; top:250px;"></div>
+            <div class="paper-platform" style="width:200px; left:1700px; top:400px;"></div>
+            <div class="paper-platform" style="width:150px; left:2000px; top:320px;"></div>
+            <div class="paper-platform" style="width:180px; left:2250px; top:450px;"></div>
+            <div class="paper-platform" style="width:150px; left:2550px; top:350px;"></div>
+            <div class="paper-platform" style="width:150px; left:2850px; top:250px;"></div>
+            <div class="paper-platform" style="width:200px; left:3150px; top:400px;"></div>
+            <div class="paper-platform" style="width:150px; left:3450px; top:300px;"></div>
+            <div class="paper-platform" style="width:200px; left:3750px; top:450px;"></div>
+            
+            <div class="paper-platform" style="width:400px; left:4050px; top:350px;"></div>
+        </div>
 
-        <img id="myWin01" src="yellow.png" style="position:absolute; width:60px; height:100px; left:4800px; top:350px;">
+        <img id="myWin01" src="yellow.png" style="position:absolute; width:60px; height:100px; left:4350px; top:250px;">
     </div>
 
 <script>
@@ -82,27 +108,26 @@
         acceleration: 0.9, 
         drag: 0.88, 
         deathY: 850,
-        deathWallSpeed: 5, 
+        deathWallSpeed: 3.8 
     };
 
     let player, gameWorld, deathWall, myVelocityX = 0, myVelocityY = 1, isGrounded = false;
-    let playerState = 'paper', projectiles = [], platforms = [], cameraX = 0;
-    let deathWallActive = false, wallX = -100, deathWallTimer;
+    let playerState = 'paper', projectiles = [], cameraX = 0;
+    let deathWallActive = false, wallX = -200, deathWallTimer;
     const keysDown = {};
 
     window.onload = function() {
         player = document.getElementById('Player');
         gameWorld = document.getElementById('GameWorld');
         deathWall = document.getElementById('DeathWall');
-        createPlatforms();
         updateState('paper');
         
         window.addEventListener('keydown', e => keysDown[e.key.toLowerCase()] = true);
         window.addEventListener('keyup', e => keysDown[e.key.toLowerCase()] = false);
         
         setInterval(gameLoop, 20);
-        setInterval(() => fire('Scissors.png', 'scissor-proj'), 1600);
-        setInterval(() => fire('rock.png', 'rock-proj'), 3000); 
+        setInterval(() => fire('Scissors.png', 'scissor-proj'), 1500);
+        setInterval(() => fire('rock.png', 'rock-proj'), 2000); 
 
         startDeathWallTimer();
     };
@@ -112,30 +137,12 @@
         deathWallTimer = setTimeout(() => {
             deathWallActive = true;
             deathWall.style.display = 'block';
-        }, 2000);
-    }
-
-    function createPlatforms() {
-        const container = document.getElementById('PlatformContainer');
-        for(let i=0; i<20; i++) {
-            let p = document.createElement('div');
-            p.className = 'paper-platform';
-            let x = 500 + (i * 220); 
-            let y = 300 + (Math.sin(i) * 120); // Adjusted height for reachability
-            p.style.width = (120 + Math.random() * 60) + 'px';
-            p.style.left = x + 'px';
-            p.style.top = y + 'px';
-            // All platforms stationary
-            p.dataset.speed = 0; 
-
-            container.appendChild(p);
-            platforms.push(p);
-        }
+        }, 1000); // 5 second head start
     }
 
     function updateState(state) {
         playerState = state;
-        player.src = (state === 'scissors') ? 'Scissors.png' : (state === 'rock' ? 'rock.png' : 'paper.png');
+        player.src = state === 'scissors' ? 'Scissors.png' : (state === 'rock' ? 'rock.png' : 'paper.png');
         if (state === 'rock') {
             player.style.width = '80px'; player.style.height = '80px';
         } else {
@@ -172,9 +179,7 @@
 
             let r1 = player.getBoundingClientRect();
             let r2 = p.el.getBoundingClientRect();
-            let touching = !(r1.right < r2.left + 10 || r1.left > r2.right - 10 || r1.bottom < r2.top + 10 || r1.top > r2.bottom - 10);
-
-            if (touching) {
+            if (!(r1.right < r2.left + 10 || r1.left > r2.right - 10 || r1.bottom < r2.top + 10 || r1.top > r2.bottom - 10)) {
                 updateState(p.type === 'rock-proj' ? 'rock' : 'scissors');
                 p.el.remove(); projectiles.splice(i, 1);
             } else if (pLeft > Math.abs(cameraX) + window.innerWidth + 100) {
@@ -186,15 +191,14 @@
         if (keysDown['a']) { myVelocityX -= config.acceleration; player.style.transform = 'scaleX(1)'; } 
         if (keysDown['d']) { myVelocityX += config.acceleration; player.style.transform = 'scaleX(-1)'; }
         
-        let newX = (parseFloat(player.style.left) || 0) + myVelocityX;
+        let newX = (parseFloat(player.style.left) || 100) + myVelocityX;
         player.style.left = Math.max(0, newX) + 'px';
 
-        let targetCam = Math.min(0, -(newX - window.innerWidth/3));
-        cameraX += (targetCam - cameraX) * 0.1; 
+        cameraX += (Math.min(0, -(newX - window.innerWidth/3)) - cameraX) * 0.1; 
         gameWorld.style.transform = `translateX(${cameraX}px)`;
 
         myVelocityY += config.gravity;
-        let currTop = parseFloat(player.style.top) || 0;
+        let currTop = parseFloat(player.style.top) || 200;
         let onPlatform = false;
         const b = player.getBoundingClientRect();
 
@@ -203,7 +207,6 @@
             if (b.right > r.left + 5 && b.left < r.right - 5 && b.bottom <= r.top + 20 && b.bottom + myVelocityY >= r.top) {
                 if (playerState === 'rock') { reset(); return; }
                 if (playerState === 'scissors') { plat.classList.add('shredded'); return; }
-                
                 if (myVelocityY >= 0) {
                     player.style.top = (currTop + (r.top - b.bottom)) + 'px';
                     myVelocityY = 0;
@@ -216,8 +219,8 @@
         isGrounded = onPlatform;
         if (keysDown['w'] && isGrounded) { myVelocityY = config.jumpForce; isGrounded = false; }
 
-        let winBox = document.getElementById('myWin01').getBoundingClientRect();
-        if (!(b.right < winBox.left || b.left > winBox.right || b.bottom < winBox.top || b.top > winBox.bottom)) {
+        let winRect = document.getElementById('myWin01').getBoundingClientRect();
+        if (!(b.right < winRect.left || b.left > winRect.right || b.bottom < winRect.top || b.top > winRect.bottom)) {
             alert('VICTORY!');
             reset();
         }
@@ -225,21 +228,16 @@
     }
 
     function reset() {
-        // RESET DEATH WALL
-        wallX = -100;
+        wallX = -200;
         deathWallActive = false;
         deathWall.style.display = 'none';
-        deathWall.style.left = wallX + 'px';
         startDeathWallTimer();
 
-        // RESET PLAYER
         player.style.left = '100px'; 
         player.style.top = '200px';
-        myVelocityX = 0; 
-        myVelocityY = 0;
+        myVelocityX = 0; myVelocityY = 0;
         updateState('paper');
 
-        // CLEANUP
         document.querySelectorAll('.shredded').forEach(p => p.classList.remove('shredded'));
         projectiles.forEach(p => p.el.remove());
         projectiles = [];
